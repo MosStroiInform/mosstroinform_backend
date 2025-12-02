@@ -13,8 +13,8 @@ from app.schemas.completion import (
     CompletionStatusResponse,
     FinalDocumentResponse,
     FinalDocumentRejectRequest,
-    EmptyResponse
 )
+from app.schemas.base import EmptyResponse
 
 router = APIRouter()
 

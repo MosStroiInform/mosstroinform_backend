@@ -7,7 +7,8 @@ from datetime import datetime
 from app.core.database import get_db
 from app.core.exceptions import NotFoundError, BadRequestError
 from app.models.document import Document, DocumentStatus
-from app.schemas.document import DocumentResponse, DocumentRejectRequest, EmptyResponse
+from app.schemas.document import DocumentResponse, DocumentRejectRequest
+from app.schemas.base import EmptyResponse
 
 router = APIRouter()
 

@@ -3,8 +3,10 @@ from typing import Optional
 from datetime import datetime
 from uuid import UUID
 
+from app.schemas.base import BaseSchema
 
-class ChatResponse(BaseModel):
+
+class ChatResponse(BaseSchema):
     """Схема чата для ответа"""
     id: UUID
     projectId: UUID = Field(..., alias="project_id")
@@ -15,15 +17,8 @@ class ChatResponse(BaseModel):
     unreadCount: int = Field(0, alias="unread_count")
     isActive: bool = Field(..., alias="is_active")
 
-    class Config:
-        from_attributes = True
-        populate_by_name = True
 
-
-# Для списка чатов используем List[ChatResponse] напрямую в эндпоинтах
-
-
-class MessageResponse(BaseModel):
+class MessageResponse(BaseSchema):
     """Схема сообщения для ответа"""
     id: UUID
     chatId: UUID = Field(..., alias="chat_id")
@@ -31,13 +26,6 @@ class MessageResponse(BaseModel):
     sentAt: datetime = Field(..., alias="sent_at")
     isFromSpecialist: bool = Field(..., alias="is_from_specialist")
     isRead: bool = Field(..., alias="is_read")
-
-    class Config:
-        from_attributes = True
-        populate_by_name = True
-
-
-# Для списка сообщений используем List[MessageResponse] напрямую в эндпоинтах
 
 
 class MessageCreateRequest(BaseModel):

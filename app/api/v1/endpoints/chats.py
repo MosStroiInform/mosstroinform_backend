@@ -1,14 +1,15 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 from datetime import datetime
 
 from app.core.database import get_db
 from app.core.exceptions import NotFoundError, BadRequestError
 from app.models.chat import Chat, Message
-from app.schemas.chat import ChatResponse, MessageResponse, MessageCreateRequest, EmptyResponse
+from app.schemas.chat import ChatResponse, MessageResponse, MessageCreateRequest
+from app.schemas.base import EmptyResponse
 
 router = APIRouter()
 

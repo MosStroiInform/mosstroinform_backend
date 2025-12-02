@@ -41,6 +41,9 @@ alembic revision --autogenerate -m "Initial migration"
 
 # Применение миграций
 alembic upgrade head
+
+# Заполнение тестовыми данными (опционально)
+python -m app.scripts.seed_data
 ```
 
 ### Запуск приложения
@@ -62,6 +65,7 @@ mosstroinform_backend/
 │   ├── core/             # Конфигурация и базовые настройки
 │   ├── models/           # SQLAlchemy модели
 │   ├── schemas/          # Pydantic схемы
+│   ├── scripts/          # Скрипты (seed data и др.)
 │   └── main.py           # Точка входа приложения
 ├── alembic/              # Миграции базы данных
 ├── tests/                # Тесты

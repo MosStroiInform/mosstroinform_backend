@@ -1,20 +1,18 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 from typing import List, Optional
-from datetime import datetime
 from uuid import UUID
 
+from app.schemas.base import BaseSchema
 
-class ProjectStageResponse(BaseModel):
+
+class ProjectStageResponse(BaseSchema):
     """Схема этапа проекта для ответа"""
     id: UUID
     name: str
     status: str  # "pending" | "in_progress" | "completed"
 
-    class Config:
-        from_attributes = True
 
-
-class ProjectResponse(BaseModel):
+class ProjectResponse(BaseSchema):
     """Схема проекта для ответа"""
     id: UUID
     name: str
@@ -25,16 +23,4 @@ class ProjectResponse(BaseModel):
     price: float
     imageUrl: Optional[str] = Field(None, alias="image_url")
     stages: List[ProjectStageResponse] = []
-
-    class Config:
-        from_attributes = True
-        populate_by_name = True
-
-
-# Для списка проектов используем List[ProjectResponse] напрямую в эндпоинтах
-
-
-class EmptyResponse(BaseModel):
-    """Пустой ответ для POST запросов"""
-    pass
 

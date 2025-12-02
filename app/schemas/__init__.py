@@ -1,7 +1,7 @@
+from app.schemas.base import BaseSchema, EmptyResponse
 from app.schemas.project import (
     ProjectResponse,
     ProjectStageResponse,
-    EmptyResponse,
 )
 from app.schemas.document import (
     DocumentResponse,
@@ -23,9 +23,10 @@ from app.schemas.completion import (
 )
 
 __all__ = [
+    "BaseSchema",
+    "EmptyResponse",
     "ProjectResponse",
     "ProjectStageResponse",
-    "EmptyResponse",
     "DocumentResponse",
     "DocumentRejectRequest",
     "ConstructionSiteResponse",
@@ -37,4 +38,3 @@ __all__ = [
     "FinalDocumentResponse",
     "FinalDocumentRejectRequest",
 ]
-

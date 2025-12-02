@@ -3,8 +3,10 @@ from typing import Optional
 from datetime import datetime
 from uuid import UUID
 
+from app.schemas.base import BaseSchema
 
-class DocumentResponse(BaseModel):
+
+class DocumentResponse(BaseSchema):
     """Схема документа для ответа"""
     id: UUID
     projectId: UUID = Field(..., alias="project_id")
@@ -15,13 +17,6 @@ class DocumentResponse(BaseModel):
     submittedAt: Optional[datetime] = Field(None, alias="submitted_at")
     approvedAt: Optional[datetime] = Field(None, alias="approved_at")
     rejectionReason: Optional[str] = Field(None, alias="rejection_reason")
-
-    class Config:
-        from_attributes = True
-        populate_by_name = True
-
-
-# Для списка документов используем List[DocumentResponse] напрямую в эндпоинтах
 
 
 class DocumentRejectRequest(BaseModel):

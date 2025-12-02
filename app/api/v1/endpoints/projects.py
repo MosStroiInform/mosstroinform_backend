@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
 from app.core.database import get_db
-from app.core.exceptions import NotFoundError, BadRequestError
+from app.core.exceptions import NotFoundError
 from app.models.project import Project
-from app.schemas.project import ProjectResponse, EmptyResponse
+from app.schemas.project import ProjectResponse
+from app.schemas.base import EmptyResponse
 
 router = APIRouter()
 

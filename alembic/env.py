@@ -10,6 +10,17 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.core.config import settings
 from app.core.database import Base
+# Импортируем все модели для autogenerate
+from app.models import (
+    Project,
+    ProjectStage,
+    Document,
+    ConstructionSite,
+    Camera,
+    Chat,
+    Message,
+    FinalDocument,
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

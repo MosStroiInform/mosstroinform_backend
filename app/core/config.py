@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     
-    # Database
-    DATABASE_URL: str = "postgresql://user:password@localhost:5432/mosstroinform_db"
+    # Database (postgresql+psycopg для использования psycopg3)
+    DATABASE_URL: str = "postgresql+psycopg://user:password@localhost:5432/mosstroinform_db"
     
     # Security (для будущей интеграции)
     SECRET_KEY: str = "your-secret-key-here-change-in-production"

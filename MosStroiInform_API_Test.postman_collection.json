@@ -1,0 +1,1373 @@
+{
+	"info": {
+		"_postman_id": "mosstroinform-api-test",
+		"name": "MosStroiInform API Test",
+		"description": "Тестовая коллекция для API МосСтройИнформ. Содержит все эндпоинты для тестирования функциональности.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "test-user"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "projectId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "documentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "siteId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cameraId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "chatId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "finalDocumentId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Проекты",
+			"item": [
+				{
+					"name": "Получить список проектов",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects"
+							]
+						},
+						"description": "Получить список всех проектов строительства"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"uuid-1\",\n    \"name\": \"Дом на участке 6 соток\",\n    \"address\": \"Московская область, д. Примерное\",\n    \"description\": \"Двухэтажный дом с гаражом\",\n    \"area\": 120.5,\n    \"floors\": 2,\n    \"price\": 5000000,\n    \"imageUrl\": \"https://example.com/images/proj-001.jpg\",\n    \"stages\": [\n      {\n        \"id\": \"uuid-stage-1\",\n        \"name\": \"Фундамент\",\n        \"status\": \"completed\"\n      }\n    ]\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Получить проект по ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}"
+							]
+						},
+						"description": "Получить детальную информацию о проекте по его ID"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects",
+										"{{projectId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"uuid-1\",\n  \"name\": \"Дом на участке 6 соток\",\n  \"address\": \"Московская область, д. Примерное\",\n  \"description\": \"Двухэтажный дом с гаражом\",\n  \"area\": 120.5,\n  \"floors\": 2,\n  \"price\": 5000000,\n  \"imageUrl\": \"https://example.com/images/proj-001.jpg\",\n  \"stages\": [\n    {\n      \"id\": \"uuid-stage-1\",\n      \"name\": \"Фундамент\",\n      \"status\": \"completed\"\n    }\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Отправить запрос на строительство",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/request",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}",
+								"request"
+							]
+						},
+						"description": "Отправить запрос на начало строительства проекта"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/request",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects",
+										"{{projectId}}",
+										"request"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Документы",
+			"item": [
+				{
+					"name": "Получить список документов",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"documents"
+							]
+						},
+						"description": "Получить список всех документов, требующих согласования"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/documents",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"documents"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"uuid-doc-1\",\n    \"projectId\": \"uuid-1\",\n    \"title\": \"Проектная документация\",\n    \"description\": \"Полный комплект проектной документации\",\n    \"fileUrl\": \"https://example.com/files/doc-001.pdf\",\n    \"status\": \"pending\",\n    \"submittedAt\": null,\n    \"approvedAt\": null,\n    \"rejectionReason\": null\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Получить документ по ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/documents/{{documentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"documents",
+								"{{documentId}}"
+							]
+						},
+						"description": "Получить детальную информацию о документе"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/documents/{{documentId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"documents",
+										"{{documentId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"uuid-doc-1\",\n  \"projectId\": \"uuid-1\",\n  \"title\": \"Проектная документация\",\n  \"description\": \"Полный комплект проектной документации\",\n  \"fileUrl\": \"https://example.com/files/doc-001.pdf\",\n  \"status\": \"pending\",\n  \"submittedAt\": null,\n  \"approvedAt\": null,\n  \"rejectionReason\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Одобрить документ",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/documents/{{documentId}}/approve",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"documents",
+								"{{documentId}}",
+								"approve"
+							]
+						},
+						"description": "Одобрить документ"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/documents/{{documentId}}/approve",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"documents",
+										"{{documentId}}",
+										"approve"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{}"
+						}
+					]
+				},
+				{
+					"name": "Отклонить документ",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Несоответствие требованиям по площади застройки\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/documents/{{documentId}}/reject",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"documents",
+								"{{documentId}}",
+								"reject"
+							]
+						},
+						"description": "Отклонить документ с указанием причины"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reason\": \"Несоответствие требованиям по площади застройки\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/documents/{{documentId}}/reject",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"documents",
+										"{{documentId}}",
+										"reject"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Строительная площадка",
+			"item": [
+				{
+					"name": "Получить информацию о строительной площадке",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/construction-sites/project/{{projectId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"construction-sites",
+								"project",
+								"{{projectId}}"
+							]
+						},
+						"description": "Получить информацию о строительной площадке для указанного проекта"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/construction-sites/project/{{projectId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"construction-sites",
+										"project",
+										"{{projectId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"uuid-site-1\",\n  \"projectId\": \"uuid-1\",\n  \"projectName\": \"Дом на участке 6 соток\",\n  \"address\": \"Московская область, д. Примерное\",\n  \"cameras\": [\n    {\n      \"id\": \"uuid-cam-1\",\n      \"name\": \"Камера 1 - Главный фасад\",\n      \"description\": \"Обзор главного фасада здания\",\n      \"streamUrl\": \"rtsp://example.com/stream/cam-001\",\n      \"isActive\": true,\n      \"thumbnailUrl\": \"https://example.com/thumbnails/cam-001.jpg\"\n    }\n  ],\n  \"startDate\": \"2024-01-15T08:00:00Z\",\n  \"expectedCompletionDate\": \"2024-12-31T18:00:00Z\",\n  \"progress\": 0.355\n}"
+						}
+					]
+				},
+				{
+					"name": "Получить список камер площадки",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/construction-sites/{{siteId}}/cameras",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"construction-sites",
+								"{{siteId}}",
+								"cameras"
+							]
+						},
+						"description": "Получить список всех камер для строительной площадки"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/construction-sites/{{siteId}}/cameras",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"construction-sites",
+										"{{siteId}}",
+										"cameras"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"uuid-cam-1\",\n    \"name\": \"Камера 1 - Главный фасад\",\n    \"description\": \"Обзор главного фасада здания\",\n    \"streamUrl\": \"rtsp://example.com/stream/cam-001\",\n    \"isActive\": true,\n    \"thumbnailUrl\": \"https://example.com/thumbnails/cam-001.jpg\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Получить информацию о камере",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/construction-sites/{{siteId}}/cameras/{{cameraId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"construction-sites",
+								"{{siteId}}",
+								"cameras",
+								"{{cameraId}}"
+							]
+						},
+						"description": "Получить детальную информацию о конкретной камере"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/construction-sites/{{siteId}}/cameras/{{cameraId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"construction-sites",
+										"{{siteId}}",
+										"cameras",
+										"{{cameraId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"uuid-cam-1\",\n  \"name\": \"Камера 1 - Главный фасад\",\n  \"description\": \"Обзор главного фасада здания\",\n  \"streamUrl\": \"rtsp://example.com/stream/cam-001\",\n  \"isActive\": true,\n  \"thumbnailUrl\": \"https://example.com/thumbnails/cam-001.jpg\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Чат",
+			"item": [
+				{
+					"name": "Получить список чатов",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/chats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chats"
+							]
+						},
+						"description": "Получить список всех чатов пользователя"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/chats",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"chats"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"uuid-chat-1\",\n    \"projectId\": \"uuid-1\",\n    \"specialistName\": \"Иван Петров\",\n    \"specialistAvatarUrl\": \"https://example.com/avatars/ivan.jpg\",\n    \"lastMessage\": \"Добрый день! Как дела с документами?\",\n    \"lastMessageAt\": \"2024-01-20T14:30:00Z\",\n    \"unreadCount\": 2,\n    \"isActive\": true\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Получить информацию о чате",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chats",
+								"{{chatId}}"
+							]
+						},
+						"description": "Получить детальную информацию о чате"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"chats",
+										"{{chatId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"uuid-chat-1\",\n  \"projectId\": \"uuid-1\",\n  \"specialistName\": \"Иван Петров\",\n  \"specialistAvatarUrl\": \"https://example.com/avatars/ivan.jpg\",\n  \"lastMessage\": \"Добрый день! Как дела с документами?\",\n  \"lastMessageAt\": \"2024-01-20T14:30:00Z\",\n  \"unreadCount\": 2,\n  \"isActive\": true\n}"
+						}
+					]
+				},
+				{
+					"name": "Получить сообщения чата",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}/messages",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chats",
+								"{{chatId}}",
+								"messages"
+							]
+						},
+						"description": "Получить список сообщений в чате"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}/messages",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"chats",
+										"{{chatId}}",
+										"messages"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"uuid-msg-1\",\n    \"chatId\": \"uuid-chat-1\",\n    \"text\": \"Добрый день! У меня вопрос по документам.\",\n    \"sentAt\": \"2024-01-20T10:00:00Z\",\n    \"isFromSpecialist\": false,\n    \"isRead\": true\n  },\n  {\n    \"id\": \"uuid-msg-2\",\n    \"chatId\": \"uuid-chat-1\",\n    \"text\": \"Здравствуйте! Конечно, задавайте вопросы.\",\n    \"sentAt\": \"2024-01-20T10:05:00Z\",\n    \"isFromSpecialist\": true,\n    \"isRead\": true\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Отправить сообщение",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Спасибо за информацию!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}/messages",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chats",
+								"{{chatId}}",
+								"messages"
+							]
+						},
+						"description": "Отправить новое сообщение в чат"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"text\": \"Спасибо за информацию!\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}/messages",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"chats",
+										"{{chatId}}",
+										"messages"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"uuid-msg-new\",\n  \"chatId\": \"uuid-chat-1\",\n  \"text\": \"Спасибо за информацию!\",\n  \"sentAt\": \"2024-01-20T15:00:00Z\",\n  \"isFromSpecialist\": false,\n  \"isRead\": false\n}"
+						}
+					]
+				},
+				{
+					"name": "Отметить сообщения как прочитанные",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}/messages/read",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chats",
+								"{{chatId}}",
+								"messages",
+								"read"
+							]
+						},
+						"description": "Отметить все непрочитанные сообщения в чате как прочитанные"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/chats/{{chatId}}/messages/read",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"chats",
+										"{{chatId}}",
+										"messages",
+										"read"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Завершение строительства",
+			"item": [
+				{
+					"name": "Получить статус завершения строительства",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/completion-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}",
+								"completion-status"
+							]
+						},
+						"description": "Получить статус завершения строительства проекта"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/completion-status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects",
+										"{{projectId}}",
+										"completion-status"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"projectId\": \"uuid-1\",\n  \"isCompleted\": false,\n  \"completionDate\": null,\n  \"progress\": 0.85,\n  \"documents\": [\n    {\n      \"id\": \"uuid-final-doc-1\",\n      \"title\": \"Акт приёмки-передачи\",\n      \"description\": \"Документ о приёмке готового объекта\",\n      \"fileUrl\": \"https://example.com/files/akt.pdf\",\n      \"status\": \"pending\",\n      \"submittedAt\": \"2024-12-15T10:00:00Z\",\n      \"signedAt\": null,\n      \"signatureUrl\": null\n    }\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Получить список финальных документов",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}",
+								"final-documents"
+							]
+						},
+						"description": "Получить список всех финальных документов проекта"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects",
+										"{{projectId}}",
+										"final-documents"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"uuid-final-doc-1\",\n    \"title\": \"Акт приёмки-передачи\",\n    \"description\": \"Документ о приёмке готового объекта\",\n    \"fileUrl\": \"https://example.com/files/akt.pdf\",\n    \"status\": \"pending\",\n    \"submittedAt\": \"2024-12-15T10:00:00Z\",\n    \"signedAt\": null,\n    \"signatureUrl\": null\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Получить финальный документ по ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents/{{finalDocumentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}",
+								"final-documents",
+								"{{finalDocumentId}}"
+							]
+						},
+						"description": "Получить детальную информацию о финальном документе"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents/{{finalDocumentId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects",
+										"{{projectId}}",
+										"final-documents",
+										"{{finalDocumentId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"uuid-final-doc-1\",\n  \"title\": \"Акт приёмки-передачи\",\n  \"description\": \"Документ о приёмке готового объекта\",\n  \"fileUrl\": \"https://example.com/files/akt.pdf\",\n  \"status\": \"pending\",\n  \"submittedAt\": \"2024-12-15T10:00:00Z\",\n  \"signedAt\": null,\n  \"signatureUrl\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Подписать финальный документ",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents/{{finalDocumentId}}/sign",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}",
+								"final-documents",
+								"{{finalDocumentId}}",
+								"sign"
+							]
+						},
+						"description": "Подписать финальный документ"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents/{{finalDocumentId}}/sign",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects",
+										"{{projectId}}",
+										"final-documents",
+										"{{finalDocumentId}}",
+										"sign"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{}"
+						}
+					]
+				},
+				{
+					"name": "Отклонить финальный документ",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Ошибки в документе\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents/{{finalDocumentId}}/reject",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}",
+								"final-documents",
+								"{{finalDocumentId}}",
+								"reject"
+							]
+						},
+						"description": "Отклонить финальный документ с указанием причины"
+					},
+					"response": [
+						{
+							"name": "Успешный ответ",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reason\": \"Ошибки в документе\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/final-documents/{{finalDocumentId}}/reject",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"projects",
+										"{{projectId}}",
+										"final-documents",
+										"{{finalDocumentId}}",
+										"reject"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

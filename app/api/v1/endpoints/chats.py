@@ -49,10 +49,10 @@ async def get_chats(db: Session = Depends(get_db)):
             "is_active": chat.is_active,
         }
         
-        result.append(ChatResponse(**response_data))
-    
+        result.append(chat_response)
+
     # Сортируем по дате последнего сообщения (новые первыми)
-    result.sort(key=lambda x: x.last_message_at or datetime.min, reverse=True)
+    result.sort(key=lambda x: x.lastMessageAt or datetime.min, reverse=True)
     
     return result
 
@@ -90,8 +90,13 @@ async def get_chat(chat_id: UUID, db: Session = Depends(get_db)):
         "unread_count": unread_count,
         "is_active": chat.is_active,
     }
+
+    chat_response = ChatResponse(**response_data)
+
+    # Создаем объект ответа для сортировки
+    chat_response = ChatResponse(**response_data)
     
-    return ChatResponse(**response_data)
+    return chat_response
 
 
 @router.get("/{chat_id}/messages", response_model=List[MessageResponse])

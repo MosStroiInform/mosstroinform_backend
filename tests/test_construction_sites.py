@@ -35,6 +35,7 @@ def test_get_construction_site_by_project(client, db_session):
     assert data["id"] == str(site_id)
     assert data["projectName"] == "Тестовый проект"
     assert data["progress"] == 0.35
+    assert data["progress"] == 0.35
 
 
 def test_get_construction_site_by_object(client, db_session):
@@ -64,6 +65,7 @@ def test_get_construction_site_by_object(client, db_session):
     data = response.json()
     assert data["id"] == str(site_id)
     assert data["projectId"] == str(project_id)
+    assert data["progress"] == 0.45
 
 
 def test_get_construction_site_not_found(client, db_session):

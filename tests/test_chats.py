@@ -72,6 +72,7 @@ def test_get_chat_by_id(client, db_session):
     data = response.json()
     assert data["id"] == str(chat_id)
     assert data["specialistName"] == "Мария Сидорова"
+    assert data["isActive"] == True
 
 
 def test_get_chat_not_found(client):
@@ -152,6 +153,7 @@ def test_create_message(client, db_session):
     data = response.json()
     assert data["text"] == "Новое сообщение"
     assert data["isFromSpecialist"] == False
+    assert data["isRead"] == False
 
 
 def test_mark_messages_as_read(client, db_session):

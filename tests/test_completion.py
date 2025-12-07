@@ -33,6 +33,7 @@ def test_get_completion_status(client, db_session):
     assert data["projectId"] == str(project_id)
     assert data["progress"] == 0.85
     assert data["isCompleted"] == False
+    assert "documents" in data
     assert data["allDocumentsSigned"] == False
 
 
@@ -226,5 +227,6 @@ def test_completion_status_completed(client, db_session):
     data = response.json()
     assert data["isCompleted"] == True
     assert data["completionDate"] is not None
+    assert data["progress"] == 1.0
     assert data["allDocumentsSigned"] == False  # в тесте all_documents_signed по умолчанию False
 

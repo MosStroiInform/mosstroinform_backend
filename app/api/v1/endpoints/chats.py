@@ -145,7 +145,11 @@ async def create_message(
     return message
 
 
-@router.post("/{chat_id}/messages/read", response_model=EmptyResponse, status_code=status.HTTP_200_OK)
+@router.post(
+    "/{chat_id}/messages/read",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def mark_messages_as_read(chat_id: UUID, db: Session = Depends(get_db)):
     """
     Отметить сообщения как прочитанные
@@ -165,4 +169,4 @@ async def mark_messages_as_read(chat_id: UUID, db: Session = Depends(get_db)):
     
     db.commit()
     
-    return EmptyResponse()
+    return None

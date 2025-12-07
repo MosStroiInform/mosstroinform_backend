@@ -188,7 +188,7 @@ def test_mark_messages_as_read(client, db_session):
     db_session.commit()
     
     response = client.post(f"/api/v1/chats/{chat_id}/messages/read")
-    assert response.status_code == 200
+    assert response.status_code == 204
     
     # Проверяем, что сообщение отмечено как прочитанное
     db_session.refresh(message)

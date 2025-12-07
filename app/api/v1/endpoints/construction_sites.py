@@ -12,6 +12,39 @@ from app.schemas.construction_site import ConstructionSiteResponse, CameraRespon
 router = APIRouter()
 
 
+@router.get("/object/{object_id}", response_model=ConstructionSiteResponse)
+async def get_construction_site_by_object(
+    object_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Получить информацию о строительной площадке по objectId
+    
+    Возвращает информацию о строительной площадке и связанном проекте.
+    """
+    construction_site = db.query(ConstructionSite).filter(
+        ConstructionSite.id == object_id
+    ).first()
+    if not construction_site:
+        raise NotFoundError("Construction site", str(object_id))
+    
+    project = db.query(Project).filter(Project.id == construction_site.project_id).first()
+    if not project:
+        raise NotFoundError("Project", str(construction_site.project_id))
+    
+    response_data = {
+        "id": construction_site.id,
+        "project_id": construction_site.project_id,
+        "project_name": project.name,
+        "address": project.address,
+        "cameras": construction_site.cameras,
+        "start_date": construction_site.start_date,
+        "expected_completion_date": construction_site.expected_completion_date,
+        "progress": construction_site.progress,
+    }
+    return ConstructionSiteResponse(**response_data)
+
+
 @router.get("/project/{project_id}", response_model=ConstructionSiteResponse)
 async def get_construction_site_by_project(
     project_id: UUID,

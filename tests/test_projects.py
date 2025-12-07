@@ -80,5 +80,30 @@ def test_request_construction(client, db_session):
     db_session.commit()
     
     response = client.post(f"/api/v1/projects/{project_id}/request")
+    assert response.status_code == 204
+
+
+def test_start_construction_creates_site(client, db_session):
+    """Тест запуска строительства и создания objectId"""
+    project_id = uuid4()
+    project = Project(
+        id=project_id,
+        name="Проект для старта",
+        address="Москва, ул. Новая, 1",
+        description="",
+        area=90.0,
+        floors=2,
+        price=3000000.0
+    )
+    db_session.add(project)
+    db_session.commit()
+
+    response = client.post(
+        f"/api/v1/projects/{project_id}/start",
+        json={"address": "Москва, ул. Новая, 1"}
+    )
     assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "construction"
+    assert data["objectId"] is not None
 

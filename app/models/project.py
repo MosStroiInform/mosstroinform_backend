@@ -15,6 +15,13 @@ class StageStatus(str, enum.Enum):
     COMPLETED = "completed"
 
 
+class ProjectStatus(str, enum.Enum):
+    """Статусы проекта"""
+    AVAILABLE = "available"
+    REQUESTED = "requested"
+    CONSTRUCTION = "construction"
+
+
 class ProjectStage(Base):
     """Модель этапа строительства проекта"""
     __tablename__ = "project_stages"
@@ -41,6 +48,9 @@ class Project(Base):
     floors = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
     image_url = Column(String(1000), nullable=True)
+    bedrooms = Column(Integer, nullable=False, default=0)
+    bathrooms = Column(Integer, nullable=False, default=0)
+    status = Column(SQLEnum(ProjectStatus), nullable=False, default=ProjectStatus.AVAILABLE)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
@@ -50,4 +60,11 @@ class Project(Base):
     construction_site = relationship("ConstructionSite", back_populates="project", uselist=False, cascade="all, delete-orphan")
     chats = relationship("Chat", back_populates="project", cascade="all, delete-orphan")
     final_documents = relationship("FinalDocument", back_populates="project", cascade="all, delete-orphan")
+
+    @property
+    def object_id(self):
+        """Возвращает ID строительной площадки (objectId) проекта, если создана."""
+        if self.construction_site:
+            return self.construction_site.id
+        return None
 

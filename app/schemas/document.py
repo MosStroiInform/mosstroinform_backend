@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, Any
 from datetime import datetime
 from uuid import UUID
 
@@ -11,12 +11,20 @@ class DocumentResponse(BaseSchema):
     id: UUID
     projectId: UUID = Field(..., alias="project_id")
     title: str
-    description: Optional[str] = None
+    description: str = ""  # Мобильное приложение ожидает обязательное поле
     fileUrl: Optional[str] = Field(None, alias="file_url")
     status: str  # "pending" | "under_review" | "approved" | "rejected"
     submittedAt: Optional[datetime] = Field(None, alias="submitted_at")
     approvedAt: Optional[datetime] = Field(None, alias="approved_at")
     rejectionReason: Optional[str] = Field(None, alias="rejection_reason")
+    
+    @field_validator('description', mode='before')
+    @classmethod
+    def convert_description(cls, v: Any) -> str:
+        """Конвертирует None в пустую строку для description"""
+        if v is None:
+            return ""
+        return str(v)
 
 
 class DocumentRejectRequest(BaseModel):

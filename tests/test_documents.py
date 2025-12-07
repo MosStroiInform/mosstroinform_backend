@@ -67,7 +67,7 @@ def test_approve_document(client, db_session):
     db_session.commit()
     
     response = client.post(f"/api/v1/documents/{document_id}/approve")
-    assert response.status_code == 200
+    assert response.status_code == 204
     
     # Проверяем, что статус изменился
     db_session.refresh(document)
@@ -102,7 +102,7 @@ def test_reject_document(client, db_session):
         f"/api/v1/documents/{document_id}/reject",
         json={"reason": "Несоответствие требованиям"}
     )
-    assert response.status_code == 200
+    assert response.status_code == 204
     
     # Проверяем, что статус изменился
     db_session.refresh(document)

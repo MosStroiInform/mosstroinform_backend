@@ -34,44 +34,37 @@ async def get_completion_status(
     if not project:
         raise NotFoundError("Project", str(project_id))
     
-    # Получаем строительную площадку для прогресса
+    # Получаем строительную площадку для прогресса и статусов
     construction_site = db.query(ConstructionSite).filter(
         ConstructionSite.project_id == project_id
     ).first()
     
     progress = construction_site.progress if construction_site else 0.0
+    all_documents_signed = (
+        construction_site.all_documents_signed if construction_site else False
+    )
     
     # Получаем финальные документы
     final_documents = db.query(FinalDocument).filter(
         FinalDocument.project_id == project_id
     ).all()
     
-    # Определяем статус завершения
-    # Считаем завершенным, если прогресс = 1.0 и все документы подписаны
-    is_completed = False
+    is_completed = construction_site.is_completed if construction_site else False
     completion_date = None
-    
-    if progress >= 1.0:
-        all_signed = all(
-            doc.status == FinalDocumentStatus.SIGNED
-            for doc in final_documents
-            if doc.status != FinalDocumentStatus.REJECTED
-        )
-        if all_signed and final_documents:
-            is_completed = True
-            # Берем дату подписания последнего документа
-            signed_docs = [
-                doc for doc in final_documents
-                if doc.signed_at is not None
-            ]
-            if signed_docs:
-                completion_date = max(doc.signed_at for doc in signed_docs)
+    if is_completed:
+        signed_docs = [
+            doc for doc in final_documents
+            if doc.signed_at is not None
+        ]
+        if signed_docs:
+            completion_date = max(doc.signed_at for doc in signed_docs)
     
     response_data = {
         "project_id": project_id,
         "is_completed": is_completed,
         "completion_date": completion_date,
         "progress": progress,
+        "all_documents_signed": all_documents_signed,
         "documents": final_documents,
     }
     

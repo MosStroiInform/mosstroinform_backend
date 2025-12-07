@@ -33,6 +33,8 @@ class ConstructionSite(Base):
     start_date = Column(DateTime, nullable=True)
     expected_completion_date = Column(DateTime, nullable=True)
     progress = Column(Float, default=0.0, nullable=False)  # от 0.0 до 1.0
+    all_documents_signed = Column(Boolean, default=False, nullable=False)
+    is_completed = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 

@@ -37,7 +37,11 @@ async def get_document(id: UUID, db: Session = Depends(get_db)):
     return document
 
 
-@router.post("/{id}/approve", response_model=EmptyResponse, status_code=status.HTTP_200_OK)
+@router.post(
+    "/{id}/approve",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def approve_document(id: UUID, db: Session = Depends(get_db)):
     """
     Одобрить документ
@@ -61,10 +65,14 @@ async def approve_document(id: UUID, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(document)
     
-    return EmptyResponse()
+    return None
 
 
-@router.post("/{id}/reject", response_model=EmptyResponse, status_code=status.HTTP_200_OK)
+@router.post(
+    "/{id}/reject",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def reject_document(
     id: UUID,
     request: DocumentRejectRequest,
@@ -92,4 +100,4 @@ async def reject_document(
     db.commit()
     db.refresh(document)
     
-    return EmptyResponse()
+    return None

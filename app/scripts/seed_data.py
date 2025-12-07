@@ -51,6 +51,8 @@ def seed_projects(db: Session) -> list[Project]:
             area=120.5,
             floors=2,
             price=5000000,
+            bedrooms=3,
+            bathrooms=2,
             image_url="https://example.com/images/house1.jpg"
         ),
         Project(
@@ -61,6 +63,8 @@ def seed_projects(db: Session) -> list[Project]:
             area=180.0,
             floors=2,
             price=8500000,
+            bedrooms=4,
+            bathrooms=3,
             image_url="https://example.com/images/house2.jpg"
         ),
         Project(
@@ -71,6 +75,8 @@ def seed_projects(db: Session) -> list[Project]:
             area=65.0,
             floors=1,
             price=2200000,
+            bedrooms=2,
+            bathrooms=1,
             image_url="https://example.com/images/house3.jpg"
         ),
     ]

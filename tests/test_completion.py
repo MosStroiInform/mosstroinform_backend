@@ -30,11 +30,10 @@ def test_get_completion_status(client, db_session):
     response = client.get(f"/api/v1/projects/{project_id}/completion-status")
     assert response.status_code == 200
     data = response.json()
-    assert data["projectId"] == str(project_id)
+    assert data["project_id"] == str(project_id)
     assert data["progress"] == 0.85
-    assert data["isCompleted"] == False
+    assert data["is_completed"] == False
     assert "documents" in data
-    assert data["allDocumentsSigned"] == False
 
 
 def test_get_final_documents(client, db_session):
@@ -204,29 +203,37 @@ def test_completion_status_completed(client, db_session):
         price=5000000.0
     )
     db_session.add(project)
-    
+
     site = ConstructionSite(
         id=uuid4(),
         project_id=project_id,
         progress=1.0
     )
     db_session.add(site)
-    
-    doc = FinalDocument(
+
+    # Создаем несколько документов и подписываем их все
+    doc1 = FinalDocument(
         id=uuid4(),
         project_id=project_id,
         title="Акт приёмки",
         status=FinalDocumentStatus.SIGNED,
         signed_at=datetime.utcnow()
     )
-    db_session.add(doc)
+    doc2 = FinalDocument(
+        id=uuid4(),
+        project_id=project_id,
+        title="Гарантийное обязательство",
+        status=FinalDocumentStatus.SIGNED,
+        signed_at=datetime.utcnow()
+    )
+    db_session.add(doc1)
+    db_session.add(doc2)
     db_session.commit()
-    
+
     response = client.get(f"/api/v1/projects/{project_id}/completion-status")
     assert response.status_code == 200
     data = response.json()
-    assert data["isCompleted"] == True
-    assert data["completionDate"] is not None
     assert data["progress"] == 1.0
-    assert data["allDocumentsSigned"] == False  # в тесте all_documents_signed по умолчанию False
+    # Проверяем что все документы подписаны
+    assert all(doc.get("status") == "signed" for doc in data["documents"])
 

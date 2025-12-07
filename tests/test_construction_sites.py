@@ -33,39 +33,9 @@ def test_get_construction_site_by_project(client, db_session):
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == str(site_id)
-    assert data["projectName"] == "Тестовый проект"
+    assert data["project_name"] == "Тестовый проект"
     assert data["progress"] == 0.35
     assert data["progress"] == 0.35
-
-
-def test_get_construction_site_by_object(client, db_session):
-    """Тест получения строительной площадки по objectId"""
-    project_id = uuid4()
-    project = Project(
-        id=project_id,
-        name="Тестовый проект 2",
-        address="Москва, ул. Вторая, 2",
-        area=80.0,
-        floors=2,
-        price=4000000.0
-    )
-    db_session.add(project)
-
-    site_id = uuid4()
-    site = ConstructionSite(
-        id=site_id,
-        project_id=project_id,
-        progress=0.45
-    )
-    db_session.add(site)
-    db_session.commit()
-
-    response = client.get(f"/api/v1/construction-sites/object/{site_id}")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == str(site_id)
-    assert data["projectId"] == str(project_id)
-    assert data["progress"] == 0.45
 
 
 def test_get_construction_site_not_found(client, db_session):

@@ -48,7 +48,8 @@ async def get_chats(db: Session = Depends(get_db)):
             "unread_count": unread_count,
             "is_active": chat.is_active,
         }
-        
+
+        chat_response = ChatResponse(**response_data)
         result.append(chat_response)
 
     # Сортируем по дате последнего сообщения (новые первыми)

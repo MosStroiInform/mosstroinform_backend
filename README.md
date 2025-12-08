@@ -56,6 +56,42 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 Документация API: http://localhost:8000/docs
 
+## Запуск в Docker / Docker Compose
+
+### Основные переменные (могут переопределяться в .env или через окружение)
+- `POSTGRES_DB` (default: `mosstroinform_db`)
+- `POSTGRES_USER` (default: `app_user`)
+- `POSTGRES_PASSWORD` (default: `app_password`)
+- `POSTGRES_HOST` (default: `db`)
+- `POSTGRES_PORT` (default: `5432`)
+- `APP_PORT` (default: `8000`) — внешний порт сервиса
+- `DATABASE_URL` (default формируется автоматически на базе параметров выше)
+- `SECRET_KEY`, `ALGORITHM`, `ACCESS_TOKEN_EXPIRE_MINUTES`
+
+### Шаги
+```bash
+# 1) Скопировать и настроить окружение (опционально, если нужны отличия от дефолта)
+cp .env.example .env  # или создайте свой .env с нужными значениями
+
+# 2) Собрать и поднять контейнеры
+docker compose up -d --build
+
+# 3) Применить миграции (выполняется автоматически в entrypoint), но можно запустить вручную:
+docker compose exec backend alembic upgrade head
+
+# 4) (Опционально) Засидить тестовые данные
+docker compose exec backend python -m app.scripts.seed_data
+
+# 5) Проверить, что API поднято
+curl http://localhost:8000/
+```
+
+### Остановка и очистка
+```bash
+docker compose down           # остановить
+docker compose down -v        # остановить и удалить volume с данными БД
+```
+
 ## Структура проекта
 
 ```

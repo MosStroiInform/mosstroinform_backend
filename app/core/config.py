@@ -1,8 +1,14 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore",  # игнорируем неиспользуемые переменные окружения (POSTGRES_*, APP_PORT и т.д.)
+    )
+
     # Application
     APP_NAME: str = "MosStroiInform API"
     APP_VERSION: str = "1.0.0"
@@ -19,10 +25,6 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 
 settings = Settings()

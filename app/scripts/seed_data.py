@@ -53,7 +53,7 @@ def seed_projects(db: Session) -> list[Project]:
             price=5000000,
             bedrooms=3,
             bathrooms=2,
-            image_url="https://example.com/images/house1.jpg"
+            image_url="http://mosstroiinformmedia.vasmarfas.com:8080/images/house1.jpg"
         ),
         Project(
             id=uuid4(),
@@ -65,7 +65,7 @@ def seed_projects(db: Session) -> list[Project]:
             price=8500000,
             bedrooms=4,
             bathrooms=3,
-            image_url="https://example.com/images/house2.jpg"
+            image_url="http://mosstroiinformmedia.vasmarfas.com:8080/images/house2.jpg"
         ),
         Project(
             id=uuid4(),
@@ -77,7 +77,7 @@ def seed_projects(db: Session) -> list[Project]:
             price=2200000,
             bedrooms=2,
             bathrooms=1,
-            image_url="https://example.com/images/house3.jpg"
+            image_url="http://mosstroiinformmedia.vasmarfas.com:8080/images/house3.jpg"
         ),
     ]
     
@@ -130,7 +130,7 @@ def seed_documents(db: Session, projects: list[Project]):
                 project_id=project.id,
                 title=title,
                 description=description,
-                file_url=f"https://example.com/files/{project.id}/{title.replace(' ', '_').lower()}.pdf",
+                file_url=f"http://mosstroiinformmedia.vasmarfas.com:8080/files/{project.id}/{title.replace(' ', '_').lower()}.pdf",
                 status=status,
                 submitted_at=submitted_at,
                 approved_at=approved_at
@@ -142,9 +142,28 @@ def seed_documents(db: Session, projects: list[Project]):
 
 def seed_construction_sites(db: Session, projects: list[Project]):
     """Создает строительные площадки и камеры"""
+    # RTSP ссылки для тестовых камер
+    rtsp_streams = [
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/bunny",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/elephants",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/sintel",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/tearsofsteel",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/vw_gti",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/subaru",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/blazes",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/escapes",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/fun",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/joyrides",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/meltdowns",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/bullrun",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/grand"
+    ]
+
+    stream_index = 0
+
     for i, project in enumerate(projects):
         progress = [0.35, 0.65, 0.15][i]
-        
+
         site = ConstructionSite(
             id=uuid4(),
             project_id=project.id,
@@ -154,40 +173,41 @@ def seed_construction_sites(db: Session, projects: list[Project]):
         )
         db.add(site)
         db.flush()  # Получаем ID для связи с камерами
-        
-        # Добавляем камеры
-        cameras = [
-            Camera(
-                id=uuid4(),
-                construction_site_id=site.id,
-                name="Камера 1 - Главный фасад",
-                description="Обзор главного фасада здания",
-                stream_url=f"rtsp://example.com/stream/{site.id}/cam1",
-                is_active=True,
-                thumbnail_url=f"https://example.com/thumbnails/{site.id}/cam1.jpg"
-            ),
-            Camera(
-                id=uuid4(),
-                construction_site_id=site.id,
-                name="Камера 2 - Задний двор",
-                description="Обзор заднего двора и стройматериалов",
-                stream_url=f"rtsp://example.com/stream/{site.id}/cam2",
-                is_active=True,
-                thumbnail_url=f"https://example.com/thumbnails/{site.id}/cam2.jpg"
-            ),
+
+        # Добавляем камеры с реальными RTSP ссылками (по 4 камеры на проект)
+        camera_configs = [
+            ("Камера 1 - Главный фасад", "Обзор главного фасада здания"),
+            ("Камера 2 - Задний двор", "Обзор заднего двора и стройматериалов"),
+            ("Камера 3 - Внутренние работы", "Контроль внутренних строительных работ"),
+            ("Камера 4 - Периметр участка", "Обзор периметра строительного участка"),
         ]
-        
+
+        cameras = []
+        for j, (cam_name, cam_description) in enumerate(camera_configs):
+            camera = Camera(
+                id=uuid4(),
+                construction_site_id=site.id,
+                name=cam_name,
+                description=cam_description,
+                stream_url=rtsp_streams[(stream_index + j) % len(rtsp_streams)],
+                is_active=True,
+                thumbnail_url=f"http://mosstroiinformmedia.vasmarfas.com:8080/thumbnails/{site.id}/cam{j+1}.jpg"
+            )
+            cameras.append(camera)
+
+        stream_index += 4
+
         for camera in cameras:
             db.add(camera)
-    
+
     db.commit()
 
 
 def seed_chats(db: Session, projects: list[Project]):
     """Создает чаты и сообщения"""
     specialists = [
-        ("Иван Петров", "https://example.com/avatars/ivan.jpg"),
-        ("Мария Сидорова", "https://example.com/avatars/maria.jpg"),
+        ("Иван Петров", "http://mosstroiinformmedia.vasmarfas.com:8080/avatars/ivan.jpg"),
+        ("Мария Сидорова", "http://mosstroiinformmedia.vasmarfas.com:8080/avatars/maria.jpg"),
         ("Алексей Козлов", None),
     ]
     
@@ -261,7 +281,7 @@ def seed_final_documents(db: Session, projects: list[Project]):
                 project_id=project.id,
                 title=title,
                 description=description,
-                file_url=f"https://example.com/files/{project.id}/final_{title.replace(' ', '_').lower()}.pdf",
+                file_url=f"http://mosstroiinformmedia.vasmarfas.com:8080/files/{project.id}/final_{title.replace(' ', '_').lower()}.pdf",
                 status=FinalDocumentStatus.PENDING,
                 submitted_at=datetime.utcnow() - timedelta(days=5)
             )

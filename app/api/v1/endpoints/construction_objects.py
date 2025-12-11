@@ -63,7 +63,8 @@ async def get_construction_objects(db: Session = Depends(get_db)):
         ).order_by(Chat.created_at).first()
 
         result.append(_build_object_response(site, project, chat.id if chat else None))
-    return result
+    # Отдаем данные с alias (camelCase), как ожидает мобильное приложение
+    return [item.model_dump(by_alias=True) for item in result]
 
 
 @router.get("/{object_id}", response_model=ConstructionObjectResponse)
@@ -87,7 +88,9 @@ async def get_construction_object(
         Chat.is_active == True,  # noqa: E712
     ).order_by(Chat.created_at).first()
 
-    return _build_object_response(construction_site, project, chat.id if chat else None)
+    response = _build_object_response(construction_site, project, chat.id if chat else None)
+    # Отдаем данные с alias (camelCase), как ожидает мобильное приложение
+    return response.model_dump(by_alias=True)
 
 
 @router.post(

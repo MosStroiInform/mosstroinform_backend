@@ -33,6 +33,27 @@ async def get_projects(
     return projects
 
 
+@router.get("/requested", response_model=List[ProjectResponse])
+async def get_requested_projects(
+    page: int = 0,
+    limit: Optional[int] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Получить список проектов в статусе 'requested'
+    
+    Возвращает проекты, по которым отправлен запрос на строительство.
+    """
+    query = (
+        db.query(Project)
+        .filter(Project.status == ProjectStatus.REQUESTED)
+        .order_by(Project.created_at.desc())
+    )
+    if limit is not None:
+        query = query.offset(page * limit).limit(limit)
+    return query.all()
+
+
 @router.get("/{id}", response_model=ProjectResponse)
 async def get_project(id: UUID, db: Session = Depends(get_db)):
     """

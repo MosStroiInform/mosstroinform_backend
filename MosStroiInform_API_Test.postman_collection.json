@@ -41,9 +41,107 @@
 			"key": "finalDocumentId",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "objectId",
+			"value": "",
+			"type": "string"
 		}
 	],
 	"item": [
+		{
+			"name": "Авторизация",
+			"item": [
+				{
+					"name": "Вход (login)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"demo@mosstroinform.ru\",\n    \"password\": \"any\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "login"]
+						},
+						"description": "Упрощённый логин, пароль не проверяется (демо)"
+					},
+					"response": []
+				},
+				{
+					"name": "Регистрация",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"any\",\n    \"name\": \"User\",\n    \"phone\": \"+79990000000\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "register"]
+						},
+						"description": "Регистрирует пользователя в памяти и возвращает токены"
+					},
+					"response": []
+				},
+				{
+					"name": "Текущий пользователь (me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "me"]
+						},
+						"description": "Возвращает текущего демо-пользователя (без проверки токена)"
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить токены (refresh)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"<refresh из /login>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/refresh",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "refresh"]
+						},
+						"description": "Обновление пары access/refresh (демо)"
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Проекты",
 			"item": [
@@ -232,6 +330,63 @@
 							"body": "{}"
 						}
 					]
+				},
+				{
+					"name": "Получить запрошенные проекты",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/requested",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"requested"
+							]
+						},
+						"description": "Список проектов в статусе requested"
+					},
+					"response": []
+				},
+				{
+					"name": "Начать строительство проекта",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address\": \"Новый адрес проекта\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/start",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"{{projectId}}",
+								"start"
+							]
+						},
+						"description": "Создаёт construction object, чат и переводит проект в статус construction"
+					},
+					"response": []
 				}
 			]
 		},
@@ -1368,6 +1523,121 @@
 					]
 				}
 			]
-		}
-	]
+		},
+		{
+		"name": "Объекты строительства",
+		"item": [
+			{
+				"name": "Получить список объектов строительства",
+				"request": {
+					"method": "GET",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"url": {
+						"raw": "{{baseUrl}}/api/v1/construction-objects",
+						"host": [
+							"{{baseUrl}}"
+						],
+						"path": [
+							"api",
+							"v1",
+							"construction-objects"
+						]
+					},
+					"description": "Список всех объектов строительства"
+				},
+				"response": []
+			},
+			{
+				"name": "Получить объект строительства по ID",
+				"request": {
+					"method": "GET",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"url": {
+						"raw": "{{baseUrl}}/api/v1/construction-objects/{{objectId}}",
+						"host": [
+							"{{baseUrl}}"
+						],
+						"path": [
+							"api",
+							"v1",
+							"construction-objects",
+							"{{objectId}}"
+						]
+					},
+					"description": "Детали объекта строительства"
+				},
+				"response": []
+			},
+			{
+				"name": "Обновить статус подписания документов (по проекту)",
+				"request": {
+					"method": "PATCH",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"body": {
+						"mode": "raw",
+						"raw": "{\n    \"allDocumentsSigned\": true\n}"
+					},
+					"url": {
+						"raw": "{{baseUrl}}/api/v1/construction-objects/by-project/{{projectId}}/documents-status",
+						"host": [
+							"{{baseUrl}}"
+						],
+						"path": [
+							"api",
+							"v1",
+							"construction-objects",
+							"by-project",
+							"{{projectId}}",
+							"documents-status"
+						]
+					},
+					"description": "Отметить, что все документы подписаны для объекта строительства"
+				},
+				"response": []
+			},
+			{
+				"name": "Завершить строительство объекта",
+				"request": {
+					"method": "POST",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"url": {
+						"raw": "{{baseUrl}}/api/v1/construction-objects/{{objectId}}/complete",
+						"host": [
+							"{{baseUrl}}"
+						],
+						"path": [
+							"api",
+							"v1",
+							"construction-objects",
+							"{{objectId}}",
+							"complete"
+						]
+					},
+					"description": "Завершить объект (требует allDocumentsSigned=true и progress=1.0)"
+				},
+				"response": []
+			}
+		]
+	}
+]
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface MessageRepository extends R2dbcRepository<MessageEntry, UUID> {
 
     @Modifying
-    @Query("UPDATE message_entry SET is_read = true WHERE id = :messageId")
+    @Query("UPDATE messages SET is_read = true WHERE id = :messageId")
     Mono<Integer> markAsRead(UUID messageId);
 
     Mono<MessageEntry> findById(UUID id);

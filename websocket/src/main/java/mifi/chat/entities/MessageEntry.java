@@ -2,16 +2,16 @@ package mifi.chat.entities;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @Builder
+@Table("messages")
 public class MessageEntry {
 
     @Id
@@ -29,11 +29,9 @@ public class MessageEntry {
     @Column("is_read")
     private boolean read;
 
-    @CreatedDate
     @Column("sent_at")
     private LocalDateTime sentAt;
 
-    @LastModifiedDate
     @Column("created_at")
     private LocalDateTime createAt;
 

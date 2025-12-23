@@ -46,6 +46,23 @@ services:
     volumes:
       - ./:/app
 
+  websocket:
+    build:
+      context: ./websocket
+      dockerfile: Dockerfile
+    container_name: mosstroinform-websocket
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: ${DB_URL:-r2dbc:postgresql://db:5432/${POSTGRES_DB:-mosstroinform_db}}
+      DB_USERNAME: ${DB_USERNAME:-${POSTGRES_USER:-app_user}}
+      DB_PASSWORD: ${DB_PASSWORD:-${POSTGRES_PASSWORD:-app_password}}
+      WS_PORT: ${WS_PORT:-8080}
+    ports:
+      - "${WS_PORT:-8080}:8080"
+    restart: unless-stopped
+
 volumes:
   db_data:
 

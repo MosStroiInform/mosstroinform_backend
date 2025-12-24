@@ -7,6 +7,7 @@ import mifi.chat.dto.ChatMessage;
 import mifi.chat.dto.Message;
 import mifi.chat.entities.MessageEntry;
 import mifi.chat.repositories.MessageRepository;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
@@ -27,6 +28,8 @@ public class ChatService implements WebSocketHandler {
     private final ChatRoomManager chatRoomManager;
 
     private final MessageRepository messageRepository;
+
+    private final DatabaseClient databaseClient;
 
     private final ObjectMapper objectMapper;
 
@@ -65,7 +68,28 @@ public class ChatService implements WebSocketHandler {
 
     private Mono<ChatMessage> handleCreateAction(Message.CreateRequest request, UUID chatId, ChatRoomManager.ChatRoom chat) {
         MessageEntry messageEntry = MessageEntry.ofText(request.text(), chatId, request.fromSpecialist());
-        return messageRepository.save(messageEntry)
+
+        return databaseClient.sql("""
+                INSERT INTO messages (id, chat_id, text, sent_at, is_from_specialist, is_read, created_at)
+                VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)
+                RETURNING id, chat_id, text, sent_at, is_from_specialist, is_read, created_at
+                """)
+                .bind("$1", messageEntry.getChatId())
+                .bind("$2", messageEntry.getText())
+                .bind("$3", messageEntry.getSentAt())
+                .bind("$4", messageEntry.isFromSpecialist())
+                .bind("$5", messageEntry.isRead())
+                .bind("$6", messageEntry.getCreateAt())
+                .map(row -> MessageEntry.builder()
+                        .id(row.get("id", UUID.class))
+                        .chatId(row.get("chat_id", UUID.class))
+                        .text(row.get("text", String.class))
+                        .fromSpecialist(row.get("is_from_specialist", Boolean.class))
+                        .read(row.get("is_read", Boolean.class))
+                        .sentAt(row.get("sent_at", java.time.LocalDateTime.class))
+                        .createAt(row.get("created_at", java.time.LocalDateTime.class))
+                        .build())
+                .one()
                 .map(ChatMessage::new)
                 .doOnNext(message -> {
                     Sinks.EmitResult result = chat.getSink().tryEmitNext(message);

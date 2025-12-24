@@ -53,7 +53,7 @@ def seed_projects(db: Session) -> list[Project]:
             price=5000000,
             bedrooms=3,
             bathrooms=2,
-            image_url="http://mosstroiinformmedia.vasmarfas.com:8080/images/house1.jpg"
+            image_url="https://mosstroiinformmedia.vasmarfas.com:8443/images/house1.jpg"
         ),
         Project(
             id=uuid4(),
@@ -65,7 +65,7 @@ def seed_projects(db: Session) -> list[Project]:
             price=8500000,
             bedrooms=4,
             bathrooms=3,
-            image_url="http://mosstroiinformmedia.vasmarfas.com:8080/images/house2.jpg"
+            image_url="https://mosstroiinformmedia.vasmarfas.com:8443/images/house2.jpg"
         ),
         Project(
             id=uuid4(),
@@ -77,7 +77,7 @@ def seed_projects(db: Session) -> list[Project]:
             price=2200000,
             bedrooms=2,
             bathrooms=1,
-            image_url="http://mosstroiinformmedia.vasmarfas.com:8080/images/house3.jpg"
+            image_url="https://mosstroiinformmedia.vasmarfas.com:8443/images/house3.jpg"
         ),
     ]
     
@@ -130,7 +130,7 @@ def seed_documents(db: Session, projects: list[Project]):
                 project_id=project.id,
                 title=title,
                 description=description,
-                file_url=f"http://mosstroiinformmedia.vasmarfas.com:8080/files/{project.id}/{title.replace(' ', '_').lower()}.pdf",
+                file_url=f"https://mosstroiinformmedia.vasmarfas.com:8443/files/{project.id}/{title.replace(' ', '_').lower()}.pdf",
                 status=status,
                 submitted_at=submitted_at,
                 approved_at=approved_at
@@ -142,21 +142,21 @@ def seed_documents(db: Session, projects: list[Project]):
 
 def seed_construction_sites(db: Session, projects: list[Project]):
     """Создает строительные площадки и камеры"""
-    # RTSP ссылки для тестовых камер
+    # RTSP ссылки для тестовых камер (порт 8554 - RTSP, мобильное приложение преобразует в WebRTC порт 8889 для веба)
     rtsp_streams = [
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/bunny",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/elephants",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/sintel",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/tearsofsteel",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/vw_gti",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/subaru",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/blazes",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/escapes",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/fun",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/joyrides",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/meltdowns",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/bullrun",
-        "rtsp://mosstroiinformmedia.vasmarfas.com:8889/grand"
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/bunny",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/elephants",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/sintel",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/tearsofsteel",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/vw_gti",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/subaru",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/blazes",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/escapes",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/fun",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/joyrides",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/meltdowns",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/bullrun",
+        "rtsp://mosstroiinformmedia.vasmarfas.com:8554/grand"
     ]
 
     stream_index = 0
@@ -191,7 +191,7 @@ def seed_construction_sites(db: Session, projects: list[Project]):
                 description=cam_description,
                 stream_url=rtsp_streams[(stream_index + j) % len(rtsp_streams)],
                 is_active=True,
-                thumbnail_url=f"http://mosstroiinformmedia.vasmarfas.com:8080/thumbnails/{site.id}/cam{j+1}.jpg"
+                thumbnail_url=f"https://mosstroiinformmedia.vasmarfas.com:8443/thumbnails/{site.id}/cam{j+1}.jpg"
             )
             cameras.append(camera)
 
@@ -206,8 +206,8 @@ def seed_construction_sites(db: Session, projects: list[Project]):
 def seed_chats(db: Session, projects: list[Project]):
     """Создает чаты и сообщения"""
     specialists = [
-        ("Иван Петров", "http://mosstroiinformmedia.vasmarfas.com:8080/avatars/ivan.jpg"),
-        ("Мария Сидорова", "http://mosstroiinformmedia.vasmarfas.com:8080/avatars/maria.jpg"),
+        ("Иван Петров", "https://mosstroiinformmedia.vasmarfas.com:8443/avatars/ivan.jpg"),
+        ("Мария Сидорова", "https://mosstroiinformmedia.vasmarfas.com:8443/avatars/maria.jpg"),
         ("Алексей Козлов", None),
     ]
     
@@ -281,7 +281,7 @@ def seed_final_documents(db: Session, projects: list[Project]):
                 project_id=project.id,
                 title=title,
                 description=description,
-                file_url=f"http://mosstroiinformmedia.vasmarfas.com:8080/files/{project.id}/final_{title.replace(' ', '_').lower()}.pdf",
+                file_url=f"https://mosstroiinformmedia.vasmarfas.com:8443/files/{project.id}/final_{title.replace(' ', '_').lower()}.pdf",
                 status=FinalDocumentStatus.PENDING,
                 submitted_at=datetime.utcnow() - timedelta(days=5)
             )

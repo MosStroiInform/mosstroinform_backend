@@ -12,6 +12,7 @@ import mifi.chat.dto.ChatCacheProperties;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.web.reactive.socket.HandshakeInfo;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
@@ -38,6 +39,9 @@ class ChatServiceTest {
     private MessageRepository messageRepository;
 
     @Mock
+    private DatabaseClient databaseClient;
+
+    @Mock
     private WebSocketSession webSocketSession;
 
     @Mock
@@ -59,7 +63,7 @@ class ChatServiceTest {
         chatCacheProperties.setTickTimer(60);
         chatCacheProperties.setTickUnit(TimeUnit.SECONDS);
         chatRoomManager = new ChatRoomManager(chatCacheProperties);
-        chatService = new ChatService(chatRoomManager, messageRepository, objectMapper);
+        chatService = new ChatService(chatRoomManager, messageRepository, databaseClient, objectMapper);
         chatId = UUID.randomUUID();
         chatRoom = chatRoomManager.getRoom(chatId);
         messageSink = chatRoom.getSink();

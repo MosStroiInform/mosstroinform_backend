@@ -3,6 +3,7 @@ package mifi.chat.entities;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -15,7 +16,8 @@ import java.util.UUID;
 public class MessageEntry {
 
     @Id
-    private final UUID id;
+    @Transient
+    private UUID id;
 
     @Column("chat_id")
     private final UUID chatId;
@@ -37,7 +39,6 @@ public class MessageEntry {
 
     public static MessageEntry ofText(String text, UUID chatId, boolean fromSpecialist) {
         return MessageEntry.builder()
-                .id(UUID.randomUUID())
                 .text(text)
                 .chatId(chatId)
                 .fromSpecialist(fromSpecialist)

@@ -151,6 +151,8 @@ async def create_project(
     
     db.commit()
     db.refresh(project)
+    # Загружаем связанные этапы
+    project.stages  # Это загрузит связанные этапы через relationship
     # Явно сериализуем через Pydantic для правильного формата
     project_response = ProjectResponse.model_validate(project)
     return project_response

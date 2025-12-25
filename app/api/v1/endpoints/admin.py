@@ -115,7 +115,7 @@ class NotificationResponse(BaseSchema):
 
 # ==================== УПРАВЛЕНИЕ ПРОЕКТАМИ (CRUD) ====================
 
-@router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/projects", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
 async def create_project(
     request: ProjectCreateRequest,
     db: Session = Depends(get_db)
@@ -158,7 +158,7 @@ async def create_project(
     return project_response
 
 
-@router.put("/{id}", response_model=ProjectResponse)
+@router.put("/projects/{id}", response_model=ProjectResponse)
 async def update_project(
     id: UUID,
     request: ProjectUpdateRequest,
@@ -203,7 +203,7 @@ async def update_project(
     return project
 
 
-@router.delete("/{id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/projects/{id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_project(
     id: UUID,
     db: Session = Depends(get_db)
@@ -224,7 +224,7 @@ async def delete_project(
 
 # ==================== УПРАВЛЕНИЕ ЭТАПАМИ ПРОЕКТА ====================
 
-@router.post("/{id}/stages", response_model=ProjectStageResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/projects/{id}/stages", response_model=ProjectStageResponse, status_code=status.HTTP_201_CREATED)
 async def create_stage(
     id: UUID,
     request: StageCreateRequest,
@@ -248,7 +248,7 @@ async def create_stage(
     return stage
 
 
-@router.put("/{id}/stages/{stage_id}", response_model=ProjectStageResponse)
+@router.put("/projects/{id}/stages/{stage_id}", response_model=ProjectStageResponse)
 async def update_stage(
     id: UUID,
     stage_id: UUID,
@@ -283,7 +283,7 @@ async def update_stage(
     return stage
 
 
-@router.delete("/{id}/stages/{stage_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/projects/{id}/stages/{stage_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_stage(
     id: UUID,
     stage_id: UUID,
@@ -310,7 +310,7 @@ async def delete_stage(
 
 # ==================== УПРАВЛЕНИЕ ЗАПРОСАМИ ====================
 
-@router.post("/{id}/approve-request", response_model=ProjectResponse)
+@router.post("/projects/{id}/approve-request", response_model=ProjectResponse)
 async def approve_request(
     id: UUID,
     request: ProjectStartRequest,
@@ -364,7 +364,7 @@ async def approve_request(
     return project
 
 
-@router.post("/{id}/reject-request", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/projects/{id}/reject-request", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
 async def reject_request(
     id: UUID,
     request: RequestRejectRequest,
@@ -389,7 +389,7 @@ async def reject_request(
     return None
 
 
-@router.post("/batch-approve", response_model=List[ProjectResponse])
+@router.post("/projects/batch-approve", response_model=List[ProjectResponse])
 async def batch_approve_requests(
     request: BatchApproveRequest,
     db: Session = Depends(get_db)

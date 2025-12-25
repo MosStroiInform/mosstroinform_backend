@@ -151,7 +151,9 @@ async def create_project(
     
     db.commit()
     db.refresh(project)
-    return project
+    # Явно сериализуем через Pydantic для правильного формата
+    project_response = ProjectResponse.model_validate(project)
+    return project_response
 
 
 @router.put("/{id}", response_model=ProjectResponse)

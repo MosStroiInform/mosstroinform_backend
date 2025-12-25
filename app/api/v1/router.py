@@ -7,6 +7,7 @@ from app.api.v1.endpoints import (
     construction_objects,
     chats,
     completion,
+    admin,
 )
 
 api_router = APIRouter()
@@ -27,4 +28,6 @@ api_router.include_router(
 )
 api_router.include_router(chats.router, prefix="/chats", tags=["chats"])
 api_router.include_router(completion.router, prefix="/projects", tags=["completion"])
+# Админские эндпоинты
+api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
 

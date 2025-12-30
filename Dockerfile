@@ -22,9 +22,12 @@ ENV APP_MODULE=app.main:app \
     HOST=0.0.0.0 \
     PORT=8000
 
-RUN chmod +x docker/entrypoint.sh
+# Устанавливаем права на выполнение для entrypoint.sh
+# Делаем это после COPY, чтобы права сохранились даже при volume mount
+RUN chmod +x docker/entrypoint.sh || true
 
 EXPOSE 8000
 
-ENTRYPOINT ["docker/entrypoint.sh"]
+# Используем sh для запуска, чтобы избежать проблем с правами
+ENTRYPOINT ["sh", "docker/entrypoint.sh"]
 

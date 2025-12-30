@@ -9,10 +9,11 @@ from app.core.database import get_db
 from app.core.exceptions import NotFoundError, BadRequestError
 from app.models.project import Project, ProjectStatus, ProjectStage, StageStatus
 from app.models.document import Document, DocumentStatus
-from app.models.construction_site import ConstructionSite
+from app.models.construction_site import ConstructionSite, Camera
 # ConstructionObject - это схема ответа, а не модель
 from app.models.chat import Chat, Message
-from app.schemas.project import ProjectResponse, ProjectStartRequest
+from app.schemas.construction_site import CameraResponse
+from app.schemas.project import ProjectResponse, ProjectStartRequest, ProjectStageResponse
 from app.schemas.base import BaseSchema, EmptyResponse
 from pydantic import BaseModel, Field
 
@@ -609,13 +610,6 @@ async def batch_reject_documents(
     
     db.commit()
     return None
-
-
-# Импортируем ProjectStageResponse
-from app.schemas.project import ProjectStageResponse
-from app.models.construction_site import Camera
-from app.schemas.construction_site import CameraResponse
-
 
 # ==================== УПРАВЛЕНИЕ КАМЕРАМИ ====================
 

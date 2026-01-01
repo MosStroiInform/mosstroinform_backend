@@ -193,11 +193,16 @@ async def create_message(
             print(f"Error broadcasting message: {e}")
     
     # Запускаем транслирование в фоне через BackgroundTasks
+    # Это гарантирует, что сообщение будет транслировано даже если клиент уже получил ответ
     if background_tasks:
         background_tasks.add_task(broadcast_message)
     else:
         # Fallback для случаев, когда BackgroundTasks не доступен
-        asyncio.create_task(broadcast_message())
+        # Используем asyncio.create_task для неблокирующего выполнения
+        try:
+            asyncio.create_task(broadcast_message())
+        except Exception as e:
+            print(f"Error scheduling broadcast task: {e}")
     
     return message
 

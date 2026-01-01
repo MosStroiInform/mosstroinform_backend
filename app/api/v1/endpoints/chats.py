@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
 from typing import List
 from uuid import UUID
 from datetime import datetime
+import httpx
+import os
+import asyncio
 
 from app.core.database import get_db
 from app.core.exceptions import NotFoundError, BadRequestError
@@ -127,7 +130,9 @@ async def create_message(
     """
     Отправить сообщение
     
-    Отправляет новое сообщение в чат. Сообщение считается отправленным от пользователя (не от специалиста).
+    Отправляет новое сообщение в чат. 
+    Если fromSpecialist=True, сообщение считается отправленным от специалиста (админ-панель).
+    Если fromSpecialist=False или не указано, сообщение считается отправленным от пользователя (мобильное приложение).
     """
     chat = db.query(Chat).filter(Chat.id == chat_id).first()
     if not chat:
@@ -136,17 +141,51 @@ async def create_message(
     if not request.text or not request.text.strip():
         raise BadRequestError("Message text cannot be empty")
     
+    # Админ-панель отправляет от специалиста, мобильное приложение - от пользователя
+    is_from_specialist = request.fromSpecialist if request.fromSpecialist is not None else False
+    
     message = Message(
         chat_id=chat_id,
         text=request.text.strip(),
         sent_at=datetime.utcnow(),
-        is_from_specialist=False,
+        is_from_specialist=is_from_specialist,
         is_read=False
     )
     
     db.add(message)
     db.commit()
     db.refresh(message)
+    
+    # Транслируем сообщение через WebSocket сервис (в фоне, не блокируем ответ)
+    async def broadcast_message():
+        try:
+            websocket_url = os.getenv("WEBSOCKET_SERVICE_URL", "http://websocket:8080")
+            broadcast_url = f"{websocket_url}/api/broadcast/message"
+            
+            broadcast_data = {
+                "messageId": str(message.id),
+                "chatId": str(chat_id),
+                "text": message.text,
+                "fromSpecialist": message.is_from_specialist,
+                "isRead": message.is_read,
+                "sentAt": message.sent_at.isoformat() if message.sent_at else datetime.utcnow().isoformat()
+            }
+            
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                try:
+                    response = await client.post(broadcast_url, json=broadcast_data)
+                    if response.status_code != 200:
+                        print(f"WebSocket broadcast failed: {response.status_code}")
+                except Exception as e:
+                    print(f"Failed to broadcast message to WebSocket: {e}")
+        except Exception as e:
+            print(f"Error broadcasting message: {e}")
+    
+    # Запускаем транслирование в фоне
+    try:
+        asyncio.create_task(broadcast_message())
+    except Exception as e:
+        print(f"Error scheduling broadcast: {e}")
     
     return message
 

@@ -46,6 +46,16 @@
 			"key": "objectId",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "stageId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "notificationId",
+			"value": "",
+			"type": "string"
 		}
 	],
 	"item": [
@@ -1636,6 +1646,441 @@
 					"description": "Завершить объект (требует allDocumentsSigned=true и progress=1.0)"
 				},
 				"response": []
+			}
+		]
+	},
+	{
+		"name": "Админ",
+		"item": [
+			{
+				"name": "Управление проектами",
+				"item": [
+					{
+						"name": "Создать проект",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"name\": \"Новый проект\",\n    \"address\": \"Москва, ул. Примерная, д. 1\",\n    \"description\": \"Описание проекта\",\n    \"area\": 150.0,\n    \"floors\": 2,\n    \"price\": 5000000.0,\n    \"bedrooms\": 3,\n    \"bathrooms\": 2,\n    \"image_url\": null,\n    \"stages\": [\"Фундамент\", \"Стены\", \"Крыша\"]\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects"]
+							},
+							"description": "Создать новый проект с указанными параметрами и этапами"
+						},
+						"response": []
+					},
+					{
+						"name": "Обновить проект",
+						"request": {
+							"method": "PUT",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"name\": \"Обновленное название\",\n    \"price\": 6000000.0,\n    \"status\": \"construction\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/{{projectId}}",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "{{projectId}}"]
+							},
+							"description": "Обновить параметры проекта. Можно обновить только указанные поля."
+						},
+						"response": []
+					},
+					{
+						"name": "Удалить проект",
+						"request": {
+							"method": "DELETE",
+							"header": [],
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/{{projectId}}",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "{{projectId}}"]
+							},
+							"description": "Удалить проект и все связанные данные (этапы, документы и т.д.)"
+						},
+						"response": []
+					}
+				]
+			},
+			{
+				"name": "Управление этапами проекта",
+				"item": [
+					{
+						"name": "Добавить этап к проекту",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"name\": \"Новый этап\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/{{projectId}}/stages",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "{{projectId}}", "stages"]
+							},
+							"description": "Добавить новый этап к проекту"
+						},
+						"response": []
+					},
+					{
+						"name": "Обновить этап проекта",
+						"request": {
+							"method": "PUT",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"name\": \"Обновленное название\",\n    \"status\": \"in_progress\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/{{projectId}}/stages/{{stageId}}",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "{{projectId}}", "stages", "{{stageId}}"]
+							},
+							"description": "Обновить название или статус этапа проекта"
+						},
+						"response": []
+					},
+					{
+						"name": "Удалить этап проекта",
+						"request": {
+							"method": "DELETE",
+							"header": [],
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/{{projectId}}/stages/{{stageId}}",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "{{projectId}}", "stages", "{{stageId}}"]
+							},
+							"description": "Удалить этап проекта"
+						},
+						"response": []
+					}
+				]
+			},
+			{
+				"name": "Управление запросами",
+				"item": [
+					{
+						"name": "Одобрить запрос на строительство",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"address\": \"Москва, ул. Примерная, д. 1\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/{{projectId}}/approve-request",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "{{projectId}}", "approve-request"]
+							},
+							"description": "Одобрить запрос и начать строительство (создает construction site и чат)"
+						},
+						"response": []
+					},
+					{
+						"name": "Отклонить запрос на строительство",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"reason\": \"Причина отклонения\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/{{projectId}}/reject-request",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "{{projectId}}", "reject-request"]
+							},
+							"description": "Отклонить запрос и вернуть проект в статус available"
+						},
+						"response": []
+					},
+					{
+						"name": "Массовое одобрение запросов",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"ids\": [\"project-id-1\", \"project-id-2\"]\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/projects/batch-approve",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "projects", "batch-approve"]
+							},
+							"description": "Одобрить несколько запросов одновременно"
+						},
+						"response": []
+					}
+				]
+			},
+			{
+				"name": "Управление прогрессом",
+				"item": [
+					{
+						"name": "Обновить прогресс строительства",
+						"request": {
+							"method": "PATCH",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"progress\": 0.75\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/construction-sites/{{siteId}}/progress",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "construction-sites", "{{siteId}}", "progress"]
+							},
+							"description": "Обновить прогресс строительной площадки (0.0 - 1.0)"
+						},
+						"response": []
+					},
+					{
+						"name": "Обновить статус этапа объекта",
+						"request": {
+							"method": "PATCH",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"status\": \"in_progress\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/construction-objects/{{objectId}}/stages/{{stageId}}/status",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "construction-objects", "{{objectId}}", "stages", "{{stageId}}", "status"]
+							},
+							"description": "Обновить статус этапа объекта (pending, in_progress, completed)"
+						},
+						"response": []
+					}
+				]
+			},
+			{
+				"name": "Аналитика",
+				"item": [
+					{
+						"name": "Получить статистику",
+						"request": {
+							"method": "GET",
+							"header": [],
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/statistics",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "statistics"]
+							},
+							"description": "Получить общую статистику по проектам, документам и финансам"
+						},
+						"response": []
+					}
+				]
+			},
+			{
+				"name": "Массовые операции",
+				"item": [
+					{
+						"name": "Массовое одобрение документов",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"ids\": [\"document-id-1\", \"document-id-2\"]\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/documents/batch-approve",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "documents", "batch-approve"]
+							},
+							"description": "Одобрить несколько документов одновременно"
+						},
+						"response": []
+					},
+					{
+						"name": "Массовое отклонение документов",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"ids\": [\"document-id-1\", \"document-id-2\"],\n    \"reason\": \"Причина отклонения\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/documents/batch-reject",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "documents", "batch-reject"]
+							},
+							"description": "Отклонить несколько документов одновременно с указанием причины"
+						},
+						"response": []
+					}
+				]
+			},
+			{
+				"name": "Управление камерами",
+				"item": [
+					{
+						"name": "Добавить камеру",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"name\": \"Камера 1\",\n    \"description\": \"Описание камеры\",\n    \"stream_url\": \"rtsp://example.com/stream\",\n    \"thumbnail_url\": null\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/construction-sites/{{siteId}}/cameras",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "construction-sites", "{{siteId}}", "cameras"]
+							},
+							"description": "Добавить камеру на строительную площадку"
+						},
+						"response": []
+					},
+					{
+						"name": "Обновить камеру",
+						"request": {
+							"method": "PUT",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"name\": \"Обновленное название\",\n    \"is_active\": false\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/construction-sites/{{siteId}}/cameras/{{cameraId}}",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "construction-sites", "{{siteId}}", "cameras", "{{cameraId}}"]
+							},
+							"description": "Обновить параметры камеры"
+						},
+						"response": []
+					},
+					{
+						"name": "Удалить камеру",
+						"request": {
+							"method": "DELETE",
+							"header": [],
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/construction-sites/{{siteId}}/cameras/{{cameraId}}",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "construction-sites", "{{siteId}}", "cameras", "{{cameraId}}"]
+							},
+							"description": "Удалить камеру с строительной площадки"
+						},
+						"response": []
+					}
+				]
+			},
+			{
+				"name": "Уведомления",
+				"item": [
+					{
+						"name": "Получить уведомления",
+						"request": {
+							"method": "GET",
+							"header": [],
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/notifications?unread_only=false",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "notifications"],
+								"query": [
+									{
+										"key": "unread_only",
+										"value": "false",
+										"description": "Показать только непрочитанные уведомления"
+									}
+								]
+							},
+							"description": "Получить список уведомлений для администратора"
+						},
+						"response": []
+					},
+					{
+						"name": "Отметить уведомление как прочитанное",
+						"request": {
+							"method": "POST",
+							"header": [],
+							"url": {
+								"raw": "{{baseUrl}}/api/v1/admin/notifications/{{notificationId}}/read",
+								"host": ["{{baseUrl}}"],
+								"path": ["api", "v1", "admin", "notifications", "{{notificationId}}", "read"]
+							},
+							"description": "Отметить уведомление как прочитанное"
+						},
+						"response": []
+					}
+				]
 			}
 		]
 	}

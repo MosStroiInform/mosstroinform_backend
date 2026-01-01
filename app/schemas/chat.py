@@ -31,4 +31,5 @@ class MessageResponse(BaseSchema):
 class MessageCreateRequest(BaseModel):
     """Схема запроса на создание сообщения"""
     text: str = Field(..., min_length=1)
+    fromSpecialist: Optional[bool] = Field(False, alias="from_specialist")
 

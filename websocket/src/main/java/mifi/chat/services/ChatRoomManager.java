@@ -58,7 +58,7 @@ public class ChatRoomManager {
 
     @Getter
     @RequiredArgsConstructor
-    static class ChatRoom {
+    public static class ChatRoom {
         private final Sinks.Many<ChatMessage> sink;
         private final LocalDateTime createAt;
         private LocalDateTime lastUpdate;

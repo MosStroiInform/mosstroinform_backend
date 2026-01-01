@@ -30,7 +30,8 @@ public class MessageBroadcastController {
             UUID chatId = UUID.fromString(request.chatId());
             ChatRoomManager.ChatRoom room = chatRoomManager.getRoom(chatId);
             
-            // Парсим дату из ISO формата (если пришла строка) или используем как есть
+            // Парсим дату из ISO формата
+            // Jackson автоматически парсит ISO формат в LocalDateTime
             LocalDateTime sentAt = request.sentAt() != null 
                     ? request.sentAt() 
                     : LocalDateTime.now();
@@ -71,7 +72,7 @@ public class MessageBroadcastController {
             String text,
             boolean fromSpecialist,
             boolean isRead,
-            @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+            @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
             LocalDateTime sentAt
     ) {}
 }

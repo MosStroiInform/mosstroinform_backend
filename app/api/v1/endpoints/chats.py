@@ -125,7 +125,8 @@ async def get_messages(chat_id: UUID, db: Session = Depends(get_db)):
 async def create_message(
     chat_id: UUID,
     request: MessageCreateRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    background_tasks: BackgroundTasks = None
 ):
     """
     Отправить сообщение
@@ -162,13 +163,23 @@ async def create_message(
             websocket_url = os.getenv("WEBSOCKET_SERVICE_URL", "http://websocket:8080")
             broadcast_url = f"{websocket_url}/api/broadcast/message"
             
+            # Форматируем дату в ISO формате для Java LocalDateTime
+            sent_at_iso = message.sent_at.isoformat() if message.sent_at else datetime.utcnow().isoformat()
+            # Убираем микросекунды, если они есть, и добавляем Z для UTC
+            if '.' in sent_at_iso:
+                sent_at_iso = sent_at_iso.split('.')[0] + 'Z'
+            elif '+' in sent_at_iso or sent_at_iso.endswith('Z'):
+                pass  # Уже в правильном формате
+            else:
+                sent_at_iso = sent_at_iso + 'Z'
+            
             broadcast_data = {
                 "messageId": str(message.id),
                 "chatId": str(chat_id),
                 "text": message.text,
                 "fromSpecialist": message.is_from_specialist,
                 "isRead": message.is_read,
-                "sentAt": message.sent_at.isoformat() if message.sent_at else datetime.utcnow().isoformat()
+                "sentAt": sent_at_iso
             }
             
             async with httpx.AsyncClient(timeout=5.0) as client:
@@ -181,11 +192,12 @@ async def create_message(
         except Exception as e:
             print(f"Error broadcasting message: {e}")
     
-    # Запускаем транслирование в фоне
-    try:
+    # Запускаем транслирование в фоне через BackgroundTasks
+    if background_tasks:
+        background_tasks.add_task(broadcast_message)
+    else:
+        # Fallback для случаев, когда BackgroundTasks не доступен
         asyncio.create_task(broadcast_message())
-    except Exception as e:
-        print(f"Error scheduling broadcast: {e}")
     
     return message
 

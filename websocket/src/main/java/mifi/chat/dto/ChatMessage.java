@@ -1,5 +1,6 @@
 package mifi.chat.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import mifi.chat.entities.MessageEntry;
@@ -10,18 +11,23 @@ import java.util.UUID;
 public record ChatMessage(
         @JsonProperty("id")
         UUID id,
-        @JsonProperty(value = "chat_id", alternate = {"chatId"})
+        @JsonProperty("chat_id")
+        @JsonAlias({"chatId"})
         UUID chatId,
         @JsonProperty("text")
         String text,
-        @JsonProperty(value = "is_from_specialist", alternate = {"fromSpecialist"})
+        @JsonProperty("is_from_specialist")
+        @JsonAlias({"fromSpecialist"})
         boolean fromSpecialist,
-        @JsonProperty(value = "is_read", alternate = {"isRead", "read"})
+        @JsonProperty("is_read")
+        @JsonAlias({"isRead", "read"})
         boolean read,
-        @JsonProperty(value = "sent_at", alternate = {"sentAt"})
+        @JsonProperty("sent_at")
+        @JsonAlias({"sentAt"})
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
         LocalDateTime sentAt,
-        @JsonProperty(value = "created_at", alternate = {"createdAt", "createAt"})
+        @JsonProperty("created_at")
+        @JsonAlias({"createdAt", "createAt"})
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
         LocalDateTime createAt
 ) {

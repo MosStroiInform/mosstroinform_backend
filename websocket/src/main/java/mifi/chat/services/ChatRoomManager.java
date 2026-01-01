@@ -31,7 +31,13 @@ public class ChatRoomManager {
     }
 
     private ChatRoom createRoom(UUID uuid) {
-        ChatRoom chatRoom = new ChatRoom(Sinks.many().multicast().onBackpressureBuffer(10), LocalDateTime.now());
+        // Используем multicast().onBackpressureBuffer(256) для надежной доставки
+        // Увеличенный размер буфера (256 вместо 10) предотвращает потерю сообщений
+        // и обеспечивает быструю доставку при нормальной нагрузке
+        ChatRoom chatRoom = new ChatRoom(
+                Sinks.many().multicast().onBackpressureBuffer(256), 
+                LocalDateTime.now()
+        );
         executorService.schedule(new CleanTask(uuid), chatCacheProperties.getTickTimer(), chatCacheProperties.getTickUnit());
         return chatRoom;
     }

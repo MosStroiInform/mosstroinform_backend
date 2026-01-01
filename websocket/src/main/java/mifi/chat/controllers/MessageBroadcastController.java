@@ -27,6 +27,9 @@ public class MessageBroadcastController {
             @RequestBody BroadcastMessageRequest request
     ) {
         try {
+            log.info("Received broadcast request: messageId={}, chatId={}, text={}, fromSpecialist={}", 
+                    request.messageId(), request.chatId(), request.text(), request.fromSpecialist());
+            
             UUID chatId = UUID.fromString(request.chatId());
             ChatRoomManager.ChatRoom room = chatRoomManager.getRoom(chatId);
             
@@ -36,7 +39,6 @@ public class MessageBroadcastController {
                     ? request.sentAt() 
                     : LocalDateTime.now();
             
-            // Если sentAt пришла как строка, нужно парсить (но Jackson должен это делать автоматически)
             // Используем текущее время для createAt, так как это время создания записи в Java сервисе
             LocalDateTime createAt = LocalDateTime.now();
             
@@ -50,17 +52,21 @@ public class MessageBroadcastController {
                     createAt
             );
             
+            log.info("Broadcasting message to chat room: chatId={}, messageId={}", chatId, message.id());
             Sinks.EmitResult result = room.getSink().tryEmitNext(message);
+            
             if (result.isFailure()) {
-                log.warn("Failed to broadcast message: {}", result);
+                log.error("Failed to broadcast message: result={}, messageId={}, chatId={}", 
+                        result, request.messageId(), chatId);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Failed to broadcast message");
+                        .body("Failed to broadcast message: " + result);
             }
             
-            log.info("Message broadcasted successfully: {} to chat: {}", request.messageId(), chatId);
+            log.info("Message broadcasted successfully: messageId={} to chat: {}", request.messageId(), chatId);
             return ResponseEntity.ok("Message broadcasted");
         } catch (Exception e) {
-            log.error("Error broadcasting message", e);
+            log.error("Error broadcasting message: messageId={}, chatId={}", 
+                    request.messageId(), request.chatId(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error: " + e.getMessage());
         }

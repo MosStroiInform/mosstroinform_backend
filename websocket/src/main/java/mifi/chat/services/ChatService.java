@@ -37,15 +37,36 @@ public class ChatService implements WebSocketHandler {
     public Mono<Void> handle(WebSocketSession session) {
         UUID uuid = getChatUuid(session);
         ChatRoomManager.ChatRoom chat = chatRoomManager.getRoom(uuid);
+        
+        log.info("WebSocket connection established for chat: {}", uuid);
+        
+        // Поток входящих сообщений - обрабатываем действия от клиента
         Flux<ChatMessage> incomingMessages = session.receive()
                 .map(WebSocketMessage::getPayloadAsText)
+                .doOnNext(text -> log.debug("Received WebSocket message: {}", text))
                 .flatMap(it -> processAction(it, uuid, chat))
-                .filter(it -> it != null);
+                .filter(it -> it != null)
+                .doOnNext(message -> log.info("Processed message, broadcasting: id={}, text={}", message.id(), message.text()));
+        
+        // Поток исходящих сообщений - транслируем всем подключенным клиентам (включая отправителя)
         Flux<WebSocketMessage> outgoingMessages =
                 chat.getSink().asFlux()
-                        .map(it -> session.textMessage(objectMapper.writeValueAsString(it)));
+                        .doOnNext(message -> log.debug("Broadcasting message to client: id={}", message.id()))
+                        .map(it -> {
+                            try {
+                                String json = objectMapper.writeValueAsString(it);
+                                log.debug("Serialized message to JSON: {}", json);
+                                return session.textMessage(json);
+                            } catch (Exception e) {
+                                log.error("Error serializing message", e);
+                                throw new RuntimeException("Error serializing message", e);
+                            }
+                        });
+        
         return session.send(outgoingMessages)
-                .and(incomingMessages.then());
+                .and(incomingMessages.then())
+                .doOnError(error -> log.error("WebSocket error for chat: {}", uuid, error))
+                .doOnTerminate(() -> log.info("WebSocket connection closed for chat: {}", uuid));
     }
 
     private Mono<ChatMessage> processAction(String json, UUID chatId, ChatRoomManager.ChatRoom chat) {
@@ -67,6 +88,8 @@ public class ChatService implements WebSocketHandler {
     }
 
     private Mono<ChatMessage> handleCreateAction(Message.CreateRequest request, UUID chatId, ChatRoomManager.ChatRoom chat) {
+        log.info("Handling CREATE action: chatId={}, text={}, fromSpecialist={}", chatId, request.text(), request.fromSpecialist());
+        
         MessageEntry messageEntry = MessageEntry.ofText(request.text(), chatId, request.fromSpecialist());
 
         return databaseClient.sql("""
@@ -92,11 +115,15 @@ public class ChatService implements WebSocketHandler {
                 .one()
                 .map(ChatMessage::new)
                 .doOnNext(message -> {
+                    log.info("Message saved to DB: id={}, broadcasting to all clients", message.id());
                     Sinks.EmitResult result = chat.getSink().tryEmitNext(message);
                     if (result.isFailure()) {
-                        log.warn("Emit failed: {}", result);
+                        log.error("Failed to emit message to sink: {}", result);
+                    } else {
+                        log.info("Message successfully emitted to sink: id={}", message.id());
                     }
-                });
+                })
+                .doOnError(error -> log.error("Error handling CREATE action", error));
     }
 
     private Mono<ChatMessage> handleReadAction(Message.ReadRequest request, UUID chatId, ChatRoomManager.ChatRoom chat) {

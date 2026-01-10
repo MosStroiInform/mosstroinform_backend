@@ -122,6 +122,16 @@ async def create_final_document(
     )
     
     db.add(document)
+    
+    # Обновляем флаг all_documents_signed на construction site
+    # При создании нового документа флаг должен быть False, так как есть неподписанный документ
+    construction_site = db.query(ConstructionSite).filter(
+        ConstructionSite.project_id == project_id
+    ).first()
+    
+    if construction_site:
+        construction_site.all_documents_signed = False
+    
     db.commit()
     db.refresh(document)
     
@@ -191,6 +201,24 @@ async def sign_final_document(
     document.signed_at = datetime.utcnow()
     document.rejection_reason = None
     
+    # Обновляем флаг all_documents_signed на construction site
+    construction_site = db.query(ConstructionSite).filter(
+        ConstructionSite.project_id == project_id
+    ).first()
+    
+    if construction_site:
+        # Проверяем, все ли документы подписаны
+        all_documents = db.query(FinalDocument).filter(
+            FinalDocument.project_id == project_id
+        ).all()
+        
+        all_signed = all(
+            doc.status == FinalDocumentStatus.SIGNED 
+            for doc in all_documents
+        ) if all_documents else False
+        
+        construction_site.all_documents_signed = all_signed
+    
     db.commit()
     db.refresh(document)
     
@@ -235,6 +263,15 @@ async def reject_final_document(
     document.rejection_reason = request.reason
     document.signed_at = None
     document.signature_url = None
+    
+    # Обновляем флаг all_documents_signed на construction site
+    construction_site = db.query(ConstructionSite).filter(
+        ConstructionSite.project_id == project_id
+    ).first()
+    
+    if construction_site:
+        # Если документ отклонен, то все документы не подписаны
+        construction_site.all_documents_signed = False
     
     db.commit()
     db.refresh(document)

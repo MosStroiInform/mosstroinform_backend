@@ -40,3 +40,9 @@ class FinalDocumentRejectRequest(BaseModel):
     """Схема запроса на отклонение финального документа"""
     reason: str = Field(..., min_length=1)
 
+
+class FinalDocumentCreateRequest(BaseModel):
+    """Схема запроса на создание финального документа"""
+    title: str = Field(..., min_length=1)
+    description: str = Field("", min_length=0)
+    fileUrl: Optional[str] = Field(None, alias="file_url")

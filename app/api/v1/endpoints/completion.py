@@ -13,6 +13,7 @@ from app.schemas.completion import (
     CompletionStatusResponse,
     FinalDocumentResponse,
     FinalDocumentRejectRequest,
+    FinalDocumentCreateRequest,
 )
 from app.schemas.base import EmptyResponse
 
@@ -90,6 +91,41 @@ async def get_final_documents(
     ).all()
     
     return final_documents
+
+
+@router.post(
+    "/{project_id}/final-documents",
+    response_model=FinalDocumentResponse,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_final_document(
+    project_id: UUID,
+    request: FinalDocumentCreateRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Создать финальный документ для проекта
+    
+    Создает новый финальный документ для указанного проекта.
+    """
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise NotFoundError("Project", str(project_id))
+    
+    document = FinalDocument(
+        project_id=project_id,
+        title=request.title,
+        description=request.description or "",
+        file_url=request.fileUrl,
+        status=FinalDocumentStatus.PENDING,
+        submitted_at=datetime.utcnow()
+    )
+    
+    db.add(document)
+    db.commit()
+    db.refresh(document)
+    
+    return document
 
 
 @router.get("/{project_id}/final-documents/{document_id}", response_model=FinalDocumentResponse)

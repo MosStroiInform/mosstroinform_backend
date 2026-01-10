@@ -48,6 +48,7 @@ class ProjectUpdateRequest(BaseModel):
     bathrooms: Optional[int] = None
     image_url: Optional[str] = None
     status: Optional[str] = None  # "available" | "requested" | "construction"
+    stages: Optional[List[str]] = None  # Список названий этапов
 
 
 class StageCreateRequest(BaseModel):
@@ -197,6 +198,21 @@ async def update_project(
             project.status = ProjectStatus(request.status)
         except ValueError:
             raise BadRequestError(f"Invalid status: {request.status}")
+    
+    # Обновление этапов, если они указаны
+    if request.stages is not None:
+        # Удаляем все существующие этапы
+        db.query(ProjectStage).filter(ProjectStage.project_id == id).delete()
+        
+        # Создаем новые этапы
+        for stage_name in request.stages:
+            if stage_name.strip():  # Пропускаем пустые названия
+                stage = ProjectStage(
+                    project_id=id,
+                    name=stage_name.strip(),
+                    status=StageStatus.PENDING
+                )
+                db.add(stage)
     
     project.updated_at = datetime.utcnow()
     db.commit()

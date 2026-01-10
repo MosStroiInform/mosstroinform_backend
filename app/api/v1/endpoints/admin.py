@@ -20,6 +20,36 @@ from pydantic import BaseModel, Field
 router = APIRouter()
 
 
+# ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+
+def _recalculate_progress(db: Session, project_id: UUID):
+    """
+    Пересчитывает прогресс строительства на основе завершенных этапов
+    """
+    # Находим construction site для проекта
+    site = db.query(ConstructionSite).filter(
+        ConstructionSite.project_id == project_id
+    ).first()
+    
+    if not site:
+        return
+    
+    # Получаем все этапы проекта
+    all_stages = db.query(ProjectStage).filter(
+        ProjectStage.project_id == project_id
+    ).all()
+    
+    if all_stages:
+        # Считаем количество завершенных этапов
+        completed_stages = sum(1 for s in all_stages if s.status == StageStatus.COMPLETED)
+        # Прогресс = количество завершенных / общее количество
+        new_progress = completed_stages / len(all_stages)
+        site.progress = new_progress
+    else:
+        # Если этапов нет, прогресс = 0
+        site.progress = 0.0
+
+
 # ==================== СХЕМЫ ====================
 
 class ProjectCreateRequest(BaseModel):
@@ -213,6 +243,9 @@ async def update_project(
                     status=StageStatus.PENDING
                 )
                 db.add(stage)
+        
+        # Пересчитываем прогресс после обновления этапов
+        _recalculate_progress(db, id)
     
     project.updated_at = datetime.utcnow()
     db.commit()
@@ -260,6 +293,10 @@ async def create_stage(
         status=StageStatus.PENDING
     )
     db.add(stage)
+    
+    # Пересчитываем прогресс после добавления этапа
+    _recalculate_progress(db, id)
+    
     db.commit()
     db.refresh(stage)
     return stage
@@ -295,6 +332,10 @@ async def update_stage(
             raise BadRequestError(f"Invalid status: {request.status}")
     
     stage.updated_at = datetime.utcnow()
+    
+    # Пересчитываем прогресс после обновления статуса этапа
+    _recalculate_progress(db, id)
+    
     db.commit()
     db.refresh(stage)
     return stage
@@ -516,6 +557,10 @@ async def update_object_stage_status(
         raise BadRequestError(f"Invalid status: {request.status}")
     
     stage.updated_at = datetime.utcnow()
+    
+    # Пересчитываем прогресс на основе завершенных этапов
+    _recalculate_progress(db, site.project_id)
+    
     db.commit()
     return None
 

@@ -3,6 +3,7 @@ from app.models.document import Document
 from app.models.construction_site import ConstructionSite, Camera
 from app.models.chat import Chat, Message
 from app.models.completion import FinalDocument
+from app.models.user import User
 
 __all__ = [
     "Project",
@@ -13,5 +14,6 @@ __all__ = [
     "Chat",
     "Message",
     "FinalDocument",
+    "User",
 ]
 

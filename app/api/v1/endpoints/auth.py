@@ -2,7 +2,7 @@ import secrets
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, status, Depends, HTTPException, Response, Cookie
+from fastapi import APIRouter, status, Depends, HTTPException, Response, Cookie, Header
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -27,12 +27,33 @@ router = APIRouter()
 
 
 def get_current_user(
-    access_token: Optional[str] = Cookie(None, alias="access_token"),
+    access_token_cookie: Optional[str] = Cookie(None, alias="access_token"),
+    authorization: Optional[str] = Header(None),
     db: Session = Depends(get_db)
 ) -> User:
-    """Dependency для получения текущего пользователя из JWT токена."""
+    """
+    Dependency для получения текущего пользователя из JWT токена.
+    Поддерживает два способа передачи токена:
+    1. Cookie (access_token) - для веб-приложений
+    2. Authorization header (Bearer token) - для мобильных и админ-панели
+    """
+    # Сначала пробуем получить токен из cookie
+    access_token = access_token_cookie
+    
+    # Если нет в cookie, пробуем из заголовка Authorization
+    if not access_token and authorization:
+        # Поддерживаем формат "Bearer <token>"
+        if authorization.startswith("Bearer "):
+            access_token = authorization[7:]  # Убираем "Bearer "
+        elif authorization.startswith("bearer "):
+            access_token = authorization[7:]  # Поддержка lowercase
+        else:
+            # Если нет префикса Bearer, считаем что весь заголовок - это токен
+            access_token = authorization
+    
+    # Если токена нет ни в cookie, ни в заголовке - возвращаем демо пользователя
+    # Это обеспечивает обратную совместимость со старым демо-режимом
     if not access_token:
-        # Для обратной совместимости - возвращаем демо пользователя
         return User(
             id=uuid4(),
             email="demo@mosstroinform.ru",
@@ -41,6 +62,7 @@ def get_current_user(
             phone=None,
         )
 
+    # Проверяем JWT токен
     payload = verify_token(access_token)
     if not payload or payload.get("type") != "access":
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -49,6 +71,7 @@ def get_current_user(
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+    # Получаем пользователя из БД
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")

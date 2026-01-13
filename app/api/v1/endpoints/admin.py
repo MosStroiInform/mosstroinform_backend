@@ -14,6 +14,7 @@ from app.models.construction_site import ConstructionSite, Camera
 from app.models.chat import Chat, Message
 from app.schemas.construction_site import CameraResponse
 from app.schemas.project import ProjectResponse, ProjectStartRequest, ProjectStageResponse
+from app.schemas.document import DocumentResponse
 from app.schemas.base import BaseSchema, EmptyResponse
 from pydantic import BaseModel, Field
 
@@ -671,6 +672,45 @@ async def batch_reject_documents(
     
     db.commit()
     return None
+
+
+# ==================== УПРАВЛЕНИЕ ДОКУМЕНТАМИ ПРОЕКТА ====================
+
+class DocumentCreateRequest(BaseModel):
+    """Схема создания документа"""
+    title: str = Field(..., min_length=1)
+    description: Optional[str] = None
+    file_url: Optional[str] = None
+
+
+@router.post("/projects/{id}/documents", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED)
+async def create_project_document(
+    id: UUID,
+    request: DocumentCreateRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Создать документ для проекта
+    
+    Создает новый документ, требующий согласования, для указанного проекта.
+    """
+    project = db.query(Project).filter(Project.id == id).first()
+    if not project:
+        raise NotFoundError("Project", str(id))
+    
+    document = Document(
+        project_id=id,
+        title=request.title,
+        description=request.description,
+        file_url=request.file_url,
+        status=DocumentStatus.PENDING,
+        submitted_at=datetime.utcnow()
+    )
+    db.add(document)
+    db.commit()
+    db.refresh(document)
+    return document
+
 
 # ==================== УПРАВЛЕНИЕ КАМЕРАМИ ====================
 

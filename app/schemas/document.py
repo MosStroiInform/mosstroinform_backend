@@ -16,6 +16,8 @@ class DocumentResponse(BaseSchema):
     status: str  # "pending" | "under_review" | "approved" | "rejected"
     submittedAt: Optional[datetime] = Field(None, alias="submitted_at")
     approvedAt: Optional[datetime] = Field(None, alias="approved_at")
+    signedAt: Optional[datetime] = Field(None, alias="signed_at")  # Дата подписания пользователем
+    signatureUrl: Optional[str] = Field(None, alias="signature_url")  # URL подписи пользователя
     rejectionReason: Optional[str] = Field(None, alias="rejection_reason")
     
     @field_validator('description', mode='before')

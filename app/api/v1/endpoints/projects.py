@@ -9,7 +9,9 @@ from app.core.exceptions import NotFoundError, BadRequestError
 from app.models.project import Project, ProjectStatus
 from app.models.construction_site import ConstructionSite
 from app.models.chat import Chat
+from app.models.document import Document, DocumentStatus
 from app.schemas.project import ProjectResponse, ProjectStartRequest
+from app.schemas.document import DocumentResponse
 from app.schemas.base import EmptyResponse
 
 router = APIRouter()
@@ -107,10 +109,21 @@ async def start_construction(
     Начать строительство проекта.
     
     Создает объект строительства и чат, если их еще нет, обновляет статус проекта.
+    Требует, чтобы все документы проекта были подписаны пользователем.
     """
     project = db.query(Project).filter(Project.id == id).first()
     if not project:
         raise NotFoundError("Project", str(id))
+    
+    # Проверяем, что все документы проекта подписаны
+    project_documents = db.query(Document).filter(Document.project_id == id).all()
+    if project_documents:
+        unsigned_documents = [doc for doc in project_documents if doc.signed_at is None]
+        if unsigned_documents:
+            raise BadRequestError(
+                f"All documents must be signed before starting construction. "
+                f"Unsigned documents: {', '.join([doc.title for doc in unsigned_documents])}"
+            )
     
     # Обновляем адрес проекта из запроса
     project.address = request.address
@@ -152,3 +165,69 @@ async def start_construction(
     db.refresh(project)
     
     return project
+
+
+@router.get(
+    "/{id}/documents",
+    response_model=List[DocumentResponse],
+    status_code=status.HTTP_200_OK
+)
+async def get_project_documents(
+    id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Получить список документов проекта
+    
+    Возвращает все документы, связанные с проектом.
+    """
+    project = db.query(Project).filter(Project.id == id).first()
+    if not project:
+        raise NotFoundError("Project", str(id))
+    
+    documents = db.query(Document).filter(Document.project_id == id).all()
+    return documents
+
+
+@router.post(
+    "/{id}/documents/{document_id}/sign",
+    response_model=EmptyResponse,
+    status_code=status.HTTP_200_OK
+)
+async def sign_project_document(
+    id: UUID,
+    document_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Подписать документ проекта пользователем
+    
+    Подписывает документ проекта пользователем, устанавливая signed_at и обновляя статус на 'approved'.
+    """
+    project = db.query(Project).filter(Project.id == id).first()
+    if not project:
+        raise NotFoundError("Project", str(id))
+    
+    document = db.query(Document).filter(
+        Document.id == document_id,
+        Document.project_id == id
+    ).first()
+    if not document:
+        raise NotFoundError("Document", str(document_id))
+    
+    if document.signed_at is not None:
+        raise BadRequestError("Document is already signed")
+    
+    if document.status == DocumentStatus.REJECTED:
+        raise BadRequestError("Cannot sign a rejected document")
+    
+    # Подписываем документ
+    document.signed_at = datetime.utcnow()
+    document.status = DocumentStatus.APPROVED
+    document.approved_at = datetime.utcnow()
+    document.rejection_reason = None
+    
+    db.commit()
+    db.refresh(document)
+    
+    return EmptyResponse()

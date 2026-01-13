@@ -101,3 +101,39 @@ async def reject_document(
     db.refresh(document)
     
     return None
+
+
+@router.post(
+    "/{id}/sign",
+    response_model=EmptyResponse,
+    status_code=status.HTTP_200_OK
+)
+async def sign_document(
+    id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Подписать документ пользователем
+    
+    Подписывает документ пользователем, устанавливая signed_at и обновляя статус на 'approved'.
+    """
+    document = db.query(Document).filter(Document.id == id).first()
+    if not document:
+        raise NotFoundError("Document", str(id))
+    
+    if document.signed_at is not None:
+        raise BadRequestError("Document is already signed")
+    
+    if document.status == DocumentStatus.REJECTED:
+        raise BadRequestError("Cannot sign a rejected document")
+    
+    # Подписываем документ
+    document.signed_at = datetime.utcnow()
+    document.status = DocumentStatus.APPROVED
+    document.approved_at = datetime.utcnow()
+    document.rejection_reason = None
+    
+    db.commit()
+    db.refresh(document)
+    
+    return EmptyResponse()

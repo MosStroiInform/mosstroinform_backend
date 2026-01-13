@@ -28,6 +28,8 @@ class Document(Base):
     status = Column(SQLEnum(DocumentStatus), nullable=False, default=DocumentStatus.PENDING)
     submitted_at = Column(DateTime, nullable=True)
     approved_at = Column(DateTime, nullable=True)
+    signed_at = Column(DateTime, nullable=True)  # Дата подписания пользователем
+    signature_url = Column(String(1000), nullable=True)  # URL подписи пользователя
     rejection_reason = Column(String(1000), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)

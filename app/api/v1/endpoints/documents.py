@@ -46,21 +46,27 @@ async def approve_document(id: UUID, db: Session = Depends(get_db)):
     """
     Одобрить документ
     
-    Одобряет документ, изменяя его статус на 'approved'.
+    Если документ еще не подписан покупателем (signed_at == None), то проставляет signed_at (подпись покупателя).
+    Если документ уже подписан покупателем, то проставляет approved_at и меняет статус на 'approved' (одобрение админа).
     """
     document = db.query(Document).filter(Document.id == id).first()
     if not document:
         raise NotFoundError("Document", str(id))
     
-    if document.status == DocumentStatus.APPROVED:
-        raise BadRequestError("Document is already approved")
-    
     if document.status == DocumentStatus.REJECTED:
         raise BadRequestError("Cannot approve a rejected document")
     
-    document.status = DocumentStatus.APPROVED
-    document.approved_at = datetime.utcnow()
-    document.rejection_reason = None
+    # Если документ еще не подписан покупателем - проставляем signed_at (подпись покупателя)
+    if document.signed_at is None:
+        document.signed_at = datetime.utcnow()
+        # Статус не меняем - он останется PENDING или UNDER_REVIEW до одобрения админом
+    else:
+        # Если документ уже подписан покупателем - проставляем approved_at (одобрение админа)
+        if document.status == DocumentStatus.APPROVED:
+            raise BadRequestError("Document is already approved")
+        document.status = DocumentStatus.APPROVED
+        document.approved_at = datetime.utcnow()
+        document.rejection_reason = None
     
     db.commit()
     db.refresh(document)

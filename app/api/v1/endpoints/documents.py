@@ -127,11 +127,11 @@ async def sign_document(
     if document.status == DocumentStatus.REJECTED:
         raise BadRequestError("Cannot sign a rejected document")
     
-    # Подписываем документ
+    # Подписываем документ покупателем
+    # Только проставляем signed_at, статус остается прежним (админ одобрит позже)
     document.signed_at = datetime.utcnow()
-    document.status = DocumentStatus.APPROVED
-    document.approved_at = datetime.utcnow()
-    document.rejection_reason = None
+    # Статус не меняем - он останется PENDING или UNDER_REVIEW до одобрения админом
+    # approved_at и status = APPROVED будут установлены админом через /documents/{id}/approve
     
     db.commit()
     db.refresh(document)

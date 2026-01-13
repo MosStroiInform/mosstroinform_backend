@@ -46,8 +46,14 @@ async def approve_document(id: UUID, db: Session = Depends(get_db)):
     """
     Одобрить документ
     
-    Если документ еще не подписан покупателем (signed_at == None), то проставляет signed_at (подпись покупателя).
-    Если документ уже подписан покупателем, то проставляет approved_at и меняет статус на 'approved' (одобрение админа).
+    Если документ еще не подписан покупателем (signed_at == None):
+        - проставляет signed_at (подпись покупателя)
+        - меняет статус на 'approved' (чтобы мобилка видела что документ подписан)
+        - approved_at не проставляется (это сделает админ позже)
+    
+    Если документ уже подписан покупателем (signed_at != None):
+        - проставляет approved_at (одобрение админа)
+        - статус уже APPROVED (был установлен при подписании покупателем)
     """
     document = db.query(Document).filter(Document.id == id).first()
     if not document:
@@ -59,12 +65,17 @@ async def approve_document(id: UUID, db: Session = Depends(get_db)):
     # Если документ еще не подписан покупателем - проставляем signed_at (подпись покупателя)
     if document.signed_at is None:
         document.signed_at = datetime.utcnow()
-        # Статус не меняем - он останется PENDING или UNDER_REVIEW до одобрения админом
+        # Меняем статус на APPROVED, чтобы мобилка видела что документ подписан и скрыла кнопку
+        # approved_at пока не проставляем - это сделает админ позже через тот же endpoint
+        document.status = DocumentStatus.APPROVED
+        document.rejection_reason = None
     else:
         # Если документ уже подписан покупателем - проставляем approved_at (одобрение админа)
-        if document.status == DocumentStatus.APPROVED:
-            raise BadRequestError("Document is already approved")
-        document.status = DocumentStatus.APPROVED
+        # Проверяем, не одобрен ли уже админом
+        if document.approved_at is not None:
+            raise BadRequestError("Document is already approved by admin")
+        # Проставляем approved_at (одобрение админом)
+        # Статус уже APPROVED (был установлен при подписании покупателем)
         document.approved_at = datetime.utcnow()
         document.rejection_reason = None
     
